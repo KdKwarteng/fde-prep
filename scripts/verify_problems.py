@@ -3,9 +3,11 @@
 all tests, and the starter code does not. Run with: python3 scripts/verify_problems.py
 """
 import importlib.util
+import sys
+
+sys.dont_write_bytecode = True
 import json
 import pathlib
-import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 spec = importlib.util.spec_from_file_location("harness", ROOT / "public" / "harness.py")
