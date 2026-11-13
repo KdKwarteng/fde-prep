@@ -1,0 +1,76 @@
+{
+  "id": "w01-clean-customer-names",
+  "week": 1,
+  "order": 1,
+  "title": "Clean customer names",
+  "difficulty": "easy",
+  "topic": "Strings and lists",
+  "functionName": "clean_names",
+  "description": "A customer sends you a spreadsheet export where the contact names are a mess: stray spaces, inconsistent capitalization, blank rows, and repeats.\n\nWrite `clean_names(names)` that takes a list of strings and returns a new list where:\n\n1. Leading and trailing whitespace is removed, and runs of inner whitespace are collapsed to one space.\n2. Each word is capitalized (`\"aDA  lovelace\"` becomes `\"Ada Lovelace\"`).\n3. Blank entries are dropped.\n4. Duplicates are removed, keeping the first occurrence. Compare names after cleaning.\n\nKeep the original order.\n\n**Example**\n\n```\nclean_names([\"  ada lovelace\", \"GRACE   hopper\", \"\", \"Ada Lovelace \"])\n# [\"Ada Lovelace\", \"Grace Hopper\"]\n```",
+  "starterCode": "def clean_names(names):\n    # names: list[str]\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          "  ada lovelace",
+          "GRACE   hopper",
+          "",
+          "Ada Lovelace "
+        ]
+      ],
+      "expected": [
+        "Ada Lovelace",
+        "Grace Hopper"
+      ]
+    },
+    {
+      "args": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        [
+          "   ",
+          "\t"
+        ]
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        [
+          "linus torvalds",
+          "LINUS TORVALDS",
+          "linus  torvalds"
+        ]
+      ],
+      "expected": [
+        "Linus Torvalds"
+      ]
+    },
+    {
+      "args": [
+        [
+          "margaret hamilton",
+          "alan turing",
+          "Margaret Hamilton",
+          "barbara liskov"
+        ]
+      ],
+      "expected": [
+        "Margaret Hamilton",
+        "Alan Turing",
+        "Barbara Liskov"
+      ]
+    }
+  ],
+  "hints": [
+    "`s.split()` with no arguments splits on any run of whitespace and drops empty pieces.",
+    "`' '.join(...)` puts the words back together. `word.capitalize()` fixes the casing of one word.",
+    "Track what you have already emitted in a `set` so the duplicate check is O(1)."
+  ],
+  "javaTip": "There is no StringBuilder dance here. `' '.join(w.capitalize() for w in s.split())` does the split, transform, and join in one expression.",
+  "solution": "def clean_names(names):\n    seen = set()\n    result = []\n    for raw in names:\n        name = \" \".join(word.capitalize() for word in raw.split())\n        if name and name not in seen:\n            seen.add(name)\n            result.append(name)\n    return result\n"
+}

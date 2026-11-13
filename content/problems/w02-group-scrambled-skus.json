@@ -1,0 +1,97 @@
+{
+  "id": "w02-group-scrambled-skus",
+  "week": 2,
+  "order": 4,
+  "title": "Group scrambled SKUs",
+  "difficulty": "medium",
+  "topic": "Hashing with a canonical key",
+  "functionName": "group_skus",
+  "description": "A warehouse scanner sometimes reads the characters of a product code in the wrong order, so `\"ab12\"` and `\"2a1b\"` are the same product.\n\nWrite `group_skus(codes)` that groups together the codes that use exactly the same characters the same number of times.\n\nReturn a list of groups. Sort the codes inside each group, then sort the groups by their first code.\n\n**Example**\n\n```\ngroup_skus([\"ab12\", \"x9\", \"2a1b\", \"9x\", \"zz\"])\n# [[\"2a1b\", \"ab12\"], [\"9x\", \"x9\"], [\"zz\"]]\n```",
+  "starterCode": "def group_skus(codes):\n    # codes: list[str]\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          "ab12",
+          "x9",
+          "2a1b",
+          "9x",
+          "zz"
+        ]
+      ],
+      "expected": [
+        [
+          "2a1b",
+          "ab12"
+        ],
+        [
+          "9x",
+          "x9"
+        ],
+        [
+          "zz"
+        ]
+      ]
+    },
+    {
+      "args": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        [
+          "a"
+        ]
+      ],
+      "expected": [
+        [
+          "a"
+        ]
+      ]
+    },
+    {
+      "args": [
+        [
+          "aab",
+          "aba",
+          "abb",
+          "baa"
+        ]
+      ],
+      "expected": [
+        [
+          "aab",
+          "aba",
+          "baa"
+        ],
+        [
+          "abb"
+        ]
+      ]
+    },
+    {
+      "args": [
+        [
+          "abc",
+          "abc",
+          "cab"
+        ]
+      ],
+      "expected": [
+        [
+          "abc",
+          "abc",
+          "cab"
+        ]
+      ]
+    }
+  ],
+  "hints": [
+    "Two codes belong together when their sorted characters are equal.",
+    "Use the sorted characters, joined into a string or as a tuple, as a dictionary key.",
+    "Sort each group, then sort the list of groups. Lists compare element by element."
+  ],
+  "solution": "from collections import defaultdict\n\ndef group_skus(codes):\n    groups = defaultdict(list)\n    for code in codes:\n        groups[\"\".join(sorted(code))].append(code)\n    return sorted(sorted(group) for group in groups.values())\n"
+}

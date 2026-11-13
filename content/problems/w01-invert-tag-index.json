@@ -1,0 +1,79 @@
+{
+  "id": "w01-invert-tag-index",
+  "week": 1,
+  "order": 5,
+  "title": "Invert a tag index",
+  "difficulty": "easy",
+  "topic": "Dictionaries and comprehensions",
+  "functionName": "invert_index",
+  "description": "You have a dictionary that maps each account to the list of feature tags it has enabled. The customer wants the reverse view: for each tag, which accounts use it?\n\nWrite `invert_index(account_tags)` that returns a dictionary mapping each tag to a **sorted** list of accounts that have it. An account should appear at most once per tag even if the input repeats a tag.\n\n**Example**\n\n```\ninvert_index({\"acme\": [\"sso\", \"audit\"], \"globex\": [\"sso\"]})\n# {\"sso\": [\"acme\", \"globex\"], \"audit\": [\"acme\"]}\n```",
+  "starterCode": "def invert_index(account_tags):\n    # account_tags: dict[str, list[str]]\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        {
+          "acme": [
+            "sso",
+            "audit"
+          ],
+          "globex": [
+            "sso"
+          ]
+        }
+      ],
+      "expected": {
+        "sso": [
+          "acme",
+          "globex"
+        ],
+        "audit": [
+          "acme"
+        ]
+      }
+    },
+    {
+      "args": [
+        {}
+      ],
+      "expected": {}
+    },
+    {
+      "args": [
+        {
+          "acme": []
+        }
+      ],
+      "expected": {}
+    },
+    {
+      "args": [
+        {
+          "zeta": [
+            "beta",
+            "beta"
+          ],
+          "alpha": [
+            "beta",
+            "gamma"
+          ]
+        }
+      ],
+      "expected": {
+        "beta": [
+          "alpha",
+          "zeta"
+        ],
+        "gamma": [
+          "alpha"
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Loop with `for account, tags in account_tags.items()` to get both at once.",
+    "`collections.defaultdict(set)` lets you write `index[tag].add(account)` without checking whether the key exists.",
+    "Finish with a dict comprehension that turns each set into a sorted list."
+  ],
+  "javaTip": "`defaultdict(set)` is the Python version of `computeIfAbsent(k, x -> new HashSet<>())`.",
+  "solution": "from collections import defaultdict\n\ndef invert_index(account_tags):\n    index = defaultdict(set)\n    for account, tags in account_tags.items():\n        for tag in tags:\n            index[tag].add(account)\n    return {tag: sorted(accounts) for tag, accounts in index.items()}\n"
+}

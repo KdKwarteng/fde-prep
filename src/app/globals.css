@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafaf9;
+  --surface: #ffffff;
+  --foreground: #1c1917;
+  --muted: #6b6560;
+  --border: #e7e5e4;
+  --accent: #0f766e;
+  --accent-soft: #ccfbf1;
+  --warn: #b45309;
+  --danger: #b91c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c0a09;
+    --surface: #1c1917;
+    --foreground: #f5f5f4;
+    --muted: #a8a29e;
+    --border: #292524;
+    --accent: #2dd4bf;
+    --accent-soft: #134e4a;
+    --warn: #fbbf24;
+    --danger: #f87171;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Problem statements are rendered from Markdown. */
+.prose-problem p,
+.prose-problem ol,
+.prose-problem ul,
+.prose-problem pre {
+  margin-bottom: 0.9rem;
+}
+.prose-problem ol {
+  list-style: decimal;
+  padding-left: 1.4rem;
+}
+.prose-problem ul {
+  list-style: disc;
+  padding-left: 1.4rem;
+}
+.prose-problem li {
+  margin-bottom: 0.25rem;
+}
+.prose-problem code {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.85em;
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+}
+.prose-problem pre {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 0.9rem;
+  overflow-x: auto;
+}
+.prose-problem pre code {
+  background: none;
+  padding: 0;
+}
+.prose-problem > :last-child {
+  margin-bottom: 0;
+}
