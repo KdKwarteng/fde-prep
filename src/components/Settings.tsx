@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DEFAULT_START_DATE } from "@/data/curriculum";
 import { progressActions, useHydrated, useProgress } from "@/lib/progress";
+import { AccountSettings } from "./AccountSettings";
 
 export function Settings() {
   const progress = useProgress();
@@ -15,6 +16,8 @@ export function Settings() {
 
   return (
     <div className="flex flex-col gap-6">
+      <AccountSettings />
+
       <section className="rounded-lg border border-border bg-surface p-5">
         <h2 className="font-semibold">Start date</h2>
         <p className="mb-3 text-sm text-muted">
@@ -61,8 +64,8 @@ export function Settings() {
       <section className="rounded-lg border border-border bg-surface p-5">
         <h2 className="font-semibold">Reset progress</h2>
         <p className="mb-3 text-sm text-muted">
-          Progress is stored in this browser only. Resetting clears solved problems, finished
-          tasks, your streak, and saved code. This cannot be undone.
+          Resetting clears solved problems, finished
+          tasks, your streak, and saved code. If you are signed in, it clears them from your account too. This cannot be undone.
         </p>
         {confirmingReset ? (
           <div className="flex gap-3">

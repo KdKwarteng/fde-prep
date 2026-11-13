@@ -46,6 +46,7 @@ Each week has three parts: a set of coding problems solved on the site, a **buil
 - **FDE-style problems.** Problems are framed as the work the role involves, such as cleaning a customer's export, reconciling two ledgers during a migration, or parsing a legacy config format.
 - **Graduated help.** Each problem has hints that reveal one at a time. The reference solution unlocks after you solve the problem or use every hint. Week 1 problems include a "Coming from Java" note.
 - **Saved work.** Code drafts are saved as you type, and progress survives a page reload.
+- **Optional sign-in and sync.** With a Supabase project connected, "Sign in with GitHub" stores progress in your account so it follows you between devices. Without one, the site runs local-only.
 - **Settings.** Change the start date, unlock every week, or reset all progress.
 
 ## Tech stack
@@ -56,8 +57,9 @@ Each week has three parts: a set of coding problems solved on the site, a **buil
 | Styling | Tailwind CSS | Small design-token set in `globals.css`, with light and dark themes that follow the system |
 | Editor | [CodeMirror 6](https://codemirror.net) | Lightweight, with Python syntax highlighting |
 | Python runtime | [Pyodide](https://pyodide.org) | CPython compiled to WebAssembly, so real Python runs in the browser |
-| Storage | Browser `localStorage` | No backend or accounts needed |
-| CI | GitHub Actions | Verifies problems, lints, and builds on every push |
+| Storage | Browser `localStorage` | Works with no backend, and stays the fast local copy when sync is on |
+| Auth and sync | [Supabase](https://supabase.com) with GitHub OAuth | Optional. Hosted Postgres with row-level security, called straight from the browser |
+| CI | GitHub Actions | Verifies problems, runs unit tests, lints, and builds on every push |
 
 ## Run it locally
 
@@ -77,12 +79,13 @@ Then open http://localhost:3000.
 | `npm run start` | Serve the production build |
 | `npm run lint` | ESLint |
 | `npm run verify` | Run every problem's reference solution against its tests |
+| `npm test` | Unit tests for the sync logic |
 
 `dev` and `build` first run two small scripts. `scripts/copy-pyodide.mjs` copies the Pyodide runtime from `node_modules` into `public/pyodide/`, and `scripts/build-problem-index.mjs` builds the problem index. Both outputs are git-ignored.
 
 ## How the code works
 
-The app has no backend. Everything below happens in the browser, on top of pages that were rendered to static HTML at build time.
+The app has no server code of its own. Everything below happens in the browser, on top of pages that were rendered to static HTML at build time. The one optional outside service is Supabase, which the browser calls directly for sign-in and sync.
 
 ### 1. Content is data, not code
 
@@ -189,7 +192,40 @@ A few details in that flow are worth knowing:
 - **Fresh inputs.** Arguments are deep-copied for each test, so a solution that mutates its input cannot affect later tests.
 - **Self-hosted runtime.** Pyodide is served from the site's own `/pyodide/` folder and not from a CDN, so the site keeps working if a third-party host is down or blocked.
 
-### 6. Checking the problems themselves
+### 6. Sign-in and sync
+
+Sync is optional and layered on top of the local store, which stays the copy the interface reads from. Three files are involved:
+
+```
+sync.ts            Supabase wiring: login, the database calls, React hook
+sync-engine.ts     The sync rules, with no browser or Supabase dependencies
+progress.ts        The local store from section 4
+```
+
+**Configuration.** `sync.ts` reads `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. If either is missing, `syncConfigured` is false, no sign-in button renders, and nothing else in this section runs.
+
+**Signing in.** `syncActions.signIn()` sends the browser to GitHub through Supabase. GitHub sends it back with a session, which the Supabase client stores and refreshes on its own. `onAuthStateChange` then reports the signed-in user, and `sync.ts` hands the user's ID to the engine.
+
+**The database.** There is one table, `progress`, with one row per user: `user_id`, a `data` column holding the whole progress object as JSON, and `updated_at`. The browser reads and writes it directly using a public key. What keeps users apart is row-level security in `supabase/schema.sql`: Postgres itself rejects any read or write where `user_id` is not the signed-in user.
+
+**The rules**, all in `SyncEngine`:
+
+| Moment | What happens |
+| --- | --- |
+| First sign-in on a browser | Local progress is merged with the account's and the result is saved to both. Guest progress is never lost by signing in. |
+| A local change while signed in | Marked as unsaved, then saved after a 1.5 second pause, so a burst of changes becomes one request. |
+| The tab regains focus | The server copy is fetched. With nothing unsaved locally it replaces the local copy, so an un-ticked task or a reset on another device carries over. With unsaved changes, the two are merged. |
+| The tab is hidden | Any unsaved change is flushed immediately. |
+| A different account signs in on the same browser | The local copy is replaced, never merged, so one person's progress cannot leak into another's account. |
+| A save fails | The change stays marked unsaved and is retried on the next flush. The header shows "Sync failed". |
+
+**Merging** (`mergeProgress`) takes the union of solved problems and finished tasks, keeps the earliest solve date, and takes the larger activity count per day.
+
+**Why the engine is separate.** `sync-engine.ts` talks to three small interfaces (`LocalStore`, `RemoteStore`, `SyncMemory`) and never imports Supabase or touches `window`. `sync-engine.test.ts` supplies in-memory fakes and simulates two devices sharing one account, which covers the rules above without a network or a browser.
+
+Setup steps are in [docs/sync-setup.md](docs/sync-setup.md).
+
+### 7. Checking the problems themselves
 
 `scripts/verify_problems.py` loads the same `public/harness.py` that the browser uses and, for every problem file, checks that:
 
@@ -197,7 +233,7 @@ A few details in that flow are worth knowing:
 - the reference solution passes every test, and
 - the starter code does not already pass every test.
 
-Because the script and the browser share one harness, a problem that verifies locally behaves the same way on the site. CI runs this script on every push, along with lint and a production build.
+Because the script and the browser share one harness, a problem that verifies locally behaves the same way on the site. CI runs this script on every push, along with the unit tests, lint, and a production build.
 
 ## Project layout
 
@@ -220,15 +256,21 @@ src/
     LockGate.tsx          Hides weeks that have not opened yet
     Workspace.tsx         Problem statement, editor, and test results
     Settings.tsx          Start date, unlock toggle, reset
+    AuthButton.tsx        Sign-in button and sync status in the header
+    AccountSettings.tsx   Account section of the settings page
     DifficultyBadge.tsx   Easy, medium, hard label
   data/
     curriculum.ts         Phases and the 26 weeks
     problems.ts           Typed index over content/problems
   lib/
     progress.ts           localStorage store and hooks
+    sync.ts               Supabase sign-in and database calls
+    sync-engine.ts        Sync rules, tested in sync-engine.test.ts
     schedule.ts           Week and streak date math
     runner.ts             Page-side client for the Python worker
-.github/workflows/ci.yml  Verify, lint, build
+supabase/schema.sql       Table and row-level security policies for sync
+docs/sync-setup.md        How to turn on sign-in and sync
+.github/workflows/ci.yml  Verify, test, lint, build
 ```
 
 ## Add a problem
@@ -242,11 +284,15 @@ Test arguments and expected values must be valid JSON. That means no tuples, set
 
 ## Deploy
 
-The site has no server-side state, so the simplest route is [Vercel](https://vercel.com/new): import this repository and accept the defaults. The `prebuild` script copies Pyodide into place during the build.
+The simplest route is [Vercel](https://vercel.com/new): import this repository and accept the defaults. The `prebuild` script copies Pyodide into place during the build.
+
+To turn on sign-in and sync, follow [docs/sync-setup.md](docs/sync-setup.md) and add the two Supabase environment variables to the Vercel project.
 
 ## Limitations and next steps
 
-- **Progress lives in one browser.** There are no accounts and no database, so progress does not sync between devices and is lost if you clear site data. Adding sign-in and a small database (for example GitHub login with Supabase) would fix this and is the natural next feature.
+- **Sync needs setup.** Until a Supabase project is connected, progress lives in one browser and is lost if you clear site data.
+- **Code drafts do not sync.** Only progress does. Drafts stay in the browser where you typed them.
+- **Whole-object sync.** Progress is saved as one JSON document, and the newest save wins when two devices change it at the same moment. That is fine for one person, and would need per-field timestamps for anything collaborative.
 - **Problem sets exist for weeks 1 to 6.** Later weeks show their focus topic and tasks, with problems still to be written.
 - **Standard library only.** Solutions can import anything in Python's standard library. Third-party packages such as `numpy` are not loaded.
 - **Single-function problems.** Every problem tests one function with JSON inputs and outputs, so linked lists are represented as nested dictionaries. Class-based problems, such as an LRU cache, will need a small extension to the harness.
