@@ -1,0 +1,62 @@
+{
+  "id": "w01-parse-settings",
+  "week": 1,
+  "order": 4,
+  "title": "Parse a settings string",
+  "difficulty": "easy",
+  "topic": "Strings and dictionaries",
+  "functionName": "parse_settings",
+  "description": "A legacy system stores configuration as a single string of `key=value` pairs separated by semicolons:\n\n```\n\"region=us-east; retries = 3;debug=true\"\n```\n\nWrite `parse_settings(text)` that returns a dictionary. Rules:\n\n1. Whitespace around keys and values is ignored.\n2. Empty segments (for example from a trailing `;`) are skipped.\n3. A value made only of digits becomes an `int`. The values `true` and `false` (any casing) become booleans. Everything else stays a string.\n4. If a key repeats, the last one wins.\n5. A value may itself contain `=`. Split on the first `=` only.\n\n**Example**\n\n```\nparse_settings(\"region=us-east; retries = 3;debug=true\")\n# {\"region\": \"us-east\", \"retries\": 3, \"debug\": True}\n```",
+  "starterCode": "def parse_settings(text):\n    # text: str\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        "region=us-east; retries = 3;debug=true"
+      ],
+      "expected": {
+        "region": "us-east",
+        "retries": 3,
+        "debug": true
+      }
+    },
+    {
+      "args": [
+        ""
+      ],
+      "expected": {}
+    },
+    {
+      "args": [
+        "a=1;a=2;"
+      ],
+      "expected": {
+        "a": 2
+      }
+    },
+    {
+      "args": [
+        "token=abc=def==; verbose=FALSE"
+      ],
+      "expected": {
+        "token": "abc=def==",
+        "verbose": false
+      }
+    },
+    {
+      "args": [
+        " ; ;name = Ada Lovelace ;port=8080"
+      ],
+      "expected": {
+        "name": "Ada Lovelace",
+        "port": 8080
+      }
+    }
+  ],
+  "hints": [
+    "`segment.split('=', 1)` splits on the first `=` only and gives you two pieces to unpack.",
+    "`value.isdigit()` tells you whether to call `int(value)`.",
+    "Check for booleans with `value.lower() in ('true', 'false')`."
+  ],
+  "javaTip": "Python dicts can hold mixed value types without generics or casting, which is why config parsing like this is so short.",
+  "solution": "def parse_settings(text):\n    settings = {}\n    for segment in text.split(\";\"):\n        if \"=\" not in segment:\n            continue\n        key, value = segment.split(\"=\", 1)\n        key, value = key.strip(), value.strip()\n        if value.isdigit():\n            value = int(value)\n        elif value.lower() in (\"true\", \"false\"):\n            value = value.lower() == \"true\"\n        settings[key] = value\n    return settings\n"
+}

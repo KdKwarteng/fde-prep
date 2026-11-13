@@ -1,0 +1,107 @@
+{
+  "id": "w02-reconcile-ledgers",
+  "week": 2,
+  "order": 3,
+  "title": "Reconcile two ledgers",
+  "difficulty": "easy",
+  "topic": "Sets",
+  "functionName": "reconcile",
+  "description": "During a data migration you need to confirm that the old system and the new system hold the same transactions.\n\nWrite `reconcile(old_ids, new_ids)` that returns a list of two lists:\n\n1. IDs present in the old system but missing from the new one.\n2. IDs present in the new system but missing from the old one.\n\nEach list should be sorted and contain no duplicates.\n\n**Example**\n\n```\nreconcile([\"t1\", \"t2\", \"t3\"], [\"t2\", \"t3\", \"t4\", \"t4\"])\n# [[\"t1\"], [\"t4\"]]\n```",
+  "starterCode": "def reconcile(old_ids, new_ids):\n    # old_ids, new_ids: list[str]\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          "t1",
+          "t2",
+          "t3"
+        ],
+        [
+          "t2",
+          "t3",
+          "t4",
+          "t4"
+        ]
+      ],
+      "expected": [
+        [
+          "t1"
+        ],
+        [
+          "t4"
+        ]
+      ]
+    },
+    {
+      "args": [
+        [],
+        []
+      ],
+      "expected": [
+        [],
+        []
+      ]
+    },
+    {
+      "args": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "a"
+        ]
+      ],
+      "expected": [
+        [],
+        []
+      ]
+    },
+    {
+      "args": [
+        [
+          "z",
+          "y",
+          "x"
+        ],
+        []
+      ],
+      "expected": [
+        [
+          "x",
+          "y",
+          "z"
+        ],
+        []
+      ]
+    },
+    {
+      "args": [
+        [
+          "a",
+          "a"
+        ],
+        [
+          "b",
+          "c",
+          "b"
+        ]
+      ],
+      "expected": [
+        [
+          "a"
+        ],
+        [
+          "b",
+          "c"
+        ]
+      ]
+    }
+  ],
+  "hints": [
+    "Convert both lists to sets first.",
+    "Set difference is the `-` operator: `old - new`."
+  ],
+  "solution": "def reconcile(old_ids, new_ids):\n    old, new = set(old_ids), set(new_ids)\n    return [sorted(old - new), sorted(new - old)]\n"
+}

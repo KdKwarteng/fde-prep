@@ -1,0 +1,118 @@
+{
+  "id": "w01-chunk-records",
+  "week": 1,
+  "order": 3,
+  "title": "Chunk records into batches",
+  "difficulty": "easy",
+  "topic": "Slicing",
+  "functionName": "chunk",
+  "description": "A customer's API accepts at most `size` records per request, so you need to split a long list into batches.\n\nWrite `chunk(items, size)` that returns a list of lists, where each inner list has `size` items except possibly the last. You can assume `size >= 1`.\n\n**Example**\n\n```\nchunk([1, 2, 3, 4, 5], 2)\n# [[1, 2], [3, 4], [5]]\n```",
+  "starterCode": "def chunk(items, size):\n    # items: list, size: int >= 1\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        2
+      ],
+      "expected": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5
+        ]
+      ]
+    },
+    {
+      "args": [
+        [],
+        3
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        5
+      ],
+      "expected": [
+        [
+          1,
+          2,
+          3
+        ]
+      ]
+    },
+    {
+      "args": [
+        [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        1
+      ],
+      "expected": [
+        [
+          "a"
+        ],
+        [
+          "b"
+        ],
+        [
+          "c"
+        ],
+        [
+          "d"
+        ]
+      ]
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        3
+      ],
+      "expected": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ]
+      ]
+    }
+  ],
+  "hints": [
+    "`range(start, stop, step)` can step through the start index of each batch.",
+    "A slice like `items[i:i + size]` never raises, even when it runs past the end."
+  ],
+  "javaTip": "Slices replace `subList` and are safe past the end of the list, so there is no `Math.min(i + size, n)` needed.",
+  "solution": "def chunk(items, size):\n    return [items[i:i + size] for i in range(0, len(items), size)]\n"
+}

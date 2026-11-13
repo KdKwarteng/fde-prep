@@ -1,0 +1,87 @@
+{
+  "id": "w01-top-search-terms",
+  "week": 1,
+  "order": 6,
+  "title": "Top search terms",
+  "difficulty": "easy",
+  "topic": "Sorting with keys",
+  "functionName": "top_terms",
+  "description": "A customer wants to know what their users search for most. You are given the raw text of many queries joined together.\n\nWrite `top_terms(text, k)` that returns the `k` most frequent words as a list of `[word, count]` pairs.\n\n1. Words are separated by whitespace. Compare them in lowercase.\n2. Strip these punctuation characters from both ends of each word: `. , ! ? : ;`\n3. Skip words that are empty after stripping.\n4. Order by count, highest first. Break ties alphabetically.\n5. If there are fewer than `k` distinct words, return all of them.\n\n**Example**\n\n```\ntop_terms(\"Refund policy? refund status. Shipping status, refund!\", 2)\n# [[\"refund\", 3], [\"status\", 2]]\n```",
+  "starterCode": "def top_terms(text, k):\n    # text: str, k: int\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        "Refund policy? refund status. Shipping status, refund!",
+        2
+      ],
+      "expected": [
+        [
+          "refund",
+          3
+        ],
+        [
+          "status",
+          2
+        ]
+      ]
+    },
+    {
+      "args": [
+        "",
+        3
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        "b a c",
+        2
+      ],
+      "expected": [
+        [
+          "a",
+          1
+        ],
+        [
+          "b",
+          1
+        ]
+      ]
+    },
+    {
+      "args": [
+        "Login login LOGIN ... ?! reset",
+        5
+      ],
+      "expected": [
+        [
+          "login",
+          3
+        ],
+        [
+          "reset",
+          1
+        ]
+      ]
+    },
+    {
+      "args": [
+        "one two two three three three",
+        1
+      ],
+      "expected": [
+        [
+          "three",
+          3
+        ]
+      ]
+    }
+  ],
+  "hints": [
+    "`word.strip('.,!?:;')` removes any of those characters from both ends.",
+    "Sort with a tuple key: `key=lambda pair: (-pair[1], pair[0])` sorts by count descending, then word ascending.",
+    "Slicing with `[:k]` is safe even when the list is shorter than `k`."
+  ],
+  "javaTip": "A tuple sort key replaces a chained `Comparator.comparing(...).thenComparing(...)`. Negating the count is the usual trick for descending order.",
+  "solution": "from collections import Counter\n\ndef top_terms(text, k):\n    words = (w.strip(\".,!?:;\").lower() for w in text.split())\n    counts = Counter(w for w in words if w)\n    ranked = sorted(counts.items(), key=lambda pair: (-pair[1], pair[0]))\n    return [[word, count] for word, count in ranked[:k]]\n"
+}

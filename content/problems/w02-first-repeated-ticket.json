@@ -1,0 +1,67 @@
+{
+  "id": "w02-first-repeated-ticket",
+  "week": 2,
+  "order": 2,
+  "title": "First repeated ticket",
+  "difficulty": "easy",
+  "topic": "Sets",
+  "functionName": "first_repeat",
+  "description": "A support queue should never contain the same ticket ID twice, but a sync bug is creating repeats.\n\nWrite `first_repeat(ticket_ids)` that returns the first ID whose **second** occurrence comes earliest in the list. Return `None` if every ID is unique.\n\n**Example**\n\n```\nfirst_repeat([\"T1\", \"T2\", \"T3\", \"T2\", \"T1\"])\n# \"T2\"   (T2 repeats at index 3, T1 not until index 4)\n```",
+  "starterCode": "def first_repeat(ticket_ids):\n    # ticket_ids: list[str]\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          "T1",
+          "T2",
+          "T3",
+          "T2",
+          "T1"
+        ]
+      ],
+      "expected": "T2"
+    },
+    {
+      "args": [
+        [
+          "a",
+          "b",
+          "c"
+        ]
+      ],
+      "expected": null
+    },
+    {
+      "args": [
+        []
+      ],
+      "expected": null
+    },
+    {
+      "args": [
+        [
+          "x",
+          "x"
+        ]
+      ],
+      "expected": "x"
+    },
+    {
+      "args": [
+        [
+          "a",
+          "b",
+          "a",
+          "b",
+          "b"
+        ]
+      ],
+      "expected": "a"
+    }
+  ],
+  "hints": [
+    "Walk the list once and remember what you have seen.",
+    "A `set` gives you O(1) membership checks, where a list would make this O(n\u00b2)."
+  ],
+  "solution": "def first_repeat(ticket_ids):\n    seen = set()\n    for ticket in ticket_ids:\n        if ticket in seen:\n            return ticket\n        seen.add(ticket)\n    return None\n"
+}

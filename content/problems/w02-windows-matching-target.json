@@ -1,0 +1,93 @@
+{
+  "id": "w02-windows-matching-target",
+  "week": 2,
+  "order": 6,
+  "title": "Windows matching a target",
+  "difficulty": "medium",
+  "topic": "Prefix sums",
+  "functionName": "count_windows",
+  "description": "This one is a stretch problem. A finance team is hunting for a missing amount and wants to know how many contiguous runs of ledger entries add up to exactly that amount.\n\nWrite `count_windows(amounts, target)` that returns how many contiguous, non-empty slices of `amounts` sum to `target`. Amounts can be negative, so a sliding window will not work.\n\n**Example**\n\n```\ncount_windows([3, 4, -4, 7, 3], 7)\n# 3\n```\n\nThe three slices are `[3, 4]`, `[7]`, and `[4, -4, 7]`.",
+  "starterCode": "def count_windows(amounts, target):\n    # amounts: list[int], target: int\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          3,
+          4,
+          -4,
+          7,
+          3
+        ],
+        7
+      ],
+      "expected": 3
+    },
+    {
+      "args": [
+        [],
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "args": [
+        [
+          1,
+          1,
+          1
+        ],
+        2
+      ],
+      "expected": 2
+    },
+    {
+      "args": [
+        [
+          0,
+          0,
+          0
+        ],
+        0
+      ],
+      "expected": 6
+    },
+    {
+      "args": [
+        [
+          5
+        ],
+        5
+      ],
+      "expected": 1
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        7
+      ],
+      "expected": 0
+    },
+    {
+      "args": [
+        [
+          1,
+          -1,
+          1,
+          -1
+        ],
+        0
+      ],
+      "expected": 4
+    }
+  ],
+  "hints": [
+    "Let `prefix[i]` be the sum of the first `i` amounts. A slice sums to `target` when two prefix sums differ by `target`.",
+    "As you walk the list, keep a dict counting how many times each prefix sum has occurred so far.",
+    "At each step add `counts[running - target]` to the answer, then record `running`. Start the dict with `{0: 1}` for the empty prefix."
+  ],
+  "solution": "from collections import defaultdict\n\ndef count_windows(amounts, target):\n    counts = defaultdict(int)\n    counts[0] = 1\n    running = 0\n    total = 0\n    for amount in amounts:\n        running += amount\n        total += counts[running - target]\n        counts[running] += 1\n    return total\n"
+}
