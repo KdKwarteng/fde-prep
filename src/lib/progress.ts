@@ -111,6 +111,18 @@ export const progressActions = {
   },
 };
 
+/** Direct access for the sync engine, which runs outside React. */
+export const progressStore = {
+  get: read,
+  set: write,
+  subscribe(listener: () => void) {
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
+  },
+};
+
 export function useProgress(): Progress {
   return useSyncExternalStore(subscribe, read, () => EMPTY_PROGRESS);
 }

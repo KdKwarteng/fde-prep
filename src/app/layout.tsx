@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { AuthButton } from "@/components/AuthButton";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </span>
               FDE Prep
             </Link>
-            <nav className="flex gap-1 text-sm">
+            <nav className="flex items-center gap-1 text-sm">
               {nav.map((item) => (
                 <Link
                   key={item.href}
@@ -40,6 +41,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                   {item.label}
                 </Link>
               ))}
+              <span className="ml-2">
+                <AuthButton />
+              </span>
             </nav>
           </div>
         </header>
