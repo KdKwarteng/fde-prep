@@ -1,0 +1,60 @@
+{
+  "id": "w04-undo-keystrokes",
+  "week": 4,
+  "order": 2,
+  "title": "Replay keystrokes",
+  "difficulty": "easy",
+  "topic": "Stacks",
+  "functionName": "replay",
+  "description": "A support tool records raw keystrokes from a terminal session, where `<` means the user pressed backspace.\n\nWrite `replay(keys)` that returns the text that was actually on screen at the end. A backspace on empty text does nothing.\n\n**Example**\n\n```\nreplay(\"pyy<thon\")     # \"python\"\nreplay(\"ab<<<c\")       # \"c\"\n```",
+  "starterCode": "def replay(keys):\n    # keys: str\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        "pyy<thon"
+      ],
+      "expected": "python"
+    },
+    {
+      "args": [
+        "ab<<<c"
+      ],
+      "expected": "c"
+    },
+    {
+      "args": [
+        ""
+      ],
+      "expected": ""
+    },
+    {
+      "args": [
+        "<<<"
+      ],
+      "expected": ""
+    },
+    {
+      "args": [
+        "hello"
+      ],
+      "expected": "hello"
+    },
+    {
+      "args": [
+        "a<b<c<"
+      ],
+      "expected": ""
+    },
+    {
+      "args": [
+        "abc<<d"
+      ],
+      "expected": "ad"
+    }
+  ],
+  "hints": [
+    "Build the result as a list of characters and treat it as a stack.",
+    "`''.join(chars)` turns the list back into a string at the end."
+  ],
+  "solution": "def replay(keys):\n    chars = []\n    for key in keys:\n        if key == \"<\":\n            if chars:\n                chars.pop()\n        else:\n            chars.append(key)\n    return \"\".join(chars)\n"
+}

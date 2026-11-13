@@ -1,0 +1,128 @@
+{
+  "id": "w05-triage-order",
+  "week": 5,
+  "order": 4,
+  "title": "Triage order",
+  "difficulty": "easy",
+  "topic": "Sorting with keys",
+  "functionName": "triage_order",
+  "description": "A support team wants its queue ordered for triage. Each ticket is a dictionary:\n\n```\n{\"id\": \"T-7\", \"priority\": \"high\", \"opened\": 1700000300}\n```\n\nWrite `triage_order(tickets)` that returns the ticket IDs in this order:\n\n1. Priority: `\"urgent\"` first, then `\"high\"`, `\"normal\"`, `\"low\"`.\n2. Within a priority, the oldest ticket (smallest `opened`) first.\n3. If those tie, by `id` alphabetically.\n\n**Example**\n\n```\ntriage_order([\n    {\"id\": \"T-2\", \"priority\": \"low\", \"opened\": 5},\n    {\"id\": \"T-9\", \"priority\": \"urgent\", \"opened\": 9},\n    {\"id\": \"T-4\", \"priority\": \"urgent\", \"opened\": 3},\n])\n# [\"T-4\", \"T-9\", \"T-2\"]\n```",
+  "starterCode": "def triage_order(tickets):\n    # tickets: list[dict] with keys id, priority, opened\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          {
+            "id": "T-2",
+            "priority": "low",
+            "opened": 5
+          },
+          {
+            "id": "T-9",
+            "priority": "urgent",
+            "opened": 9
+          },
+          {
+            "id": "T-4",
+            "priority": "urgent",
+            "opened": 3
+          }
+        ]
+      ],
+      "expected": [
+        "T-4",
+        "T-9",
+        "T-2"
+      ]
+    },
+    {
+      "args": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        [
+          {
+            "id": "B",
+            "priority": "normal",
+            "opened": 1
+          },
+          {
+            "id": "A",
+            "priority": "normal",
+            "opened": 1
+          }
+        ]
+      ],
+      "expected": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "args": [
+        [
+          {
+            "id": "a",
+            "priority": "low",
+            "opened": 1
+          },
+          {
+            "id": "b",
+            "priority": "normal",
+            "opened": 2
+          },
+          {
+            "id": "c",
+            "priority": "high",
+            "opened": 3
+          },
+          {
+            "id": "d",
+            "priority": "urgent",
+            "opened": 4
+          }
+        ]
+      ],
+      "expected": [
+        "d",
+        "c",
+        "b",
+        "a"
+      ]
+    },
+    {
+      "args": [
+        [
+          {
+            "id": "x",
+            "priority": "high",
+            "opened": 10
+          },
+          {
+            "id": "y",
+            "priority": "high",
+            "opened": 2
+          },
+          {
+            "id": "z",
+            "priority": "normal",
+            "opened": 1
+          }
+        ]
+      ],
+      "expected": [
+        "y",
+        "x",
+        "z"
+      ]
+    }
+  ],
+  "hints": [
+    "Map each priority name to a number so it can be compared.",
+    "`sorted(tickets, key=...)` accepts a function that returns a tuple. Tuples compare element by element."
+  ],
+  "solution": "RANK = {\"urgent\": 0, \"high\": 1, \"normal\": 2, \"low\": 3}\n\ndef triage_order(tickets):\n    ordered = sorted(tickets, key=lambda t: (RANK[t[\"priority\"]], t[\"opened\"], t[\"id\"]))\n    return [ticket[\"id\"] for ticket in ordered]\n"
+}

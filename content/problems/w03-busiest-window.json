@@ -1,0 +1,98 @@
+{
+  "id": "w03-busiest-window",
+  "week": 3,
+  "order": 4,
+  "title": "Busiest window",
+  "difficulty": "easy",
+  "topic": "Sliding window",
+  "functionName": "busiest_window",
+  "description": "For capacity planning, a customer wants to know the heaviest load their API saw over any `k` consecutive minutes.\n\nWrite `busiest_window(requests, k)` where `requests[i]` is the request count in minute `i`. Return the largest total over any `k` consecutive minutes. Return `0` if there are fewer than `k` minutes or `k` is less than 1.\n\nDo it in one pass. Do not re-add the whole window each time.\n\n**Example**\n\n```\nbusiest_window([3, 8, 2, 9, 4], 2)\n# 13   (minutes with 9 and 4)\n```",
+  "starterCode": "def busiest_window(requests, k):\n    # requests: list[int] (non-negative), k: int\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          3,
+          8,
+          2,
+          9,
+          4
+        ],
+        2
+      ],
+      "expected": 13
+    },
+    {
+      "args": [
+        [
+          3,
+          8,
+          2,
+          9,
+          4
+        ],
+        5
+      ],
+      "expected": 26
+    },
+    {
+      "args": [
+        [
+          3,
+          8,
+          2
+        ],
+        4
+      ],
+      "expected": 0
+    },
+    {
+      "args": [
+        [],
+        1
+      ],
+      "expected": 0
+    },
+    {
+      "args": [
+        [
+          5,
+          1,
+          1,
+          1,
+          5
+        ],
+        1
+      ],
+      "expected": 5
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "args": [
+        [
+          4,
+          4,
+          4,
+          4
+        ],
+        3
+      ],
+      "expected": 12
+    }
+  ],
+  "hints": [
+    "Compute the sum of the first `k` values once.",
+    "To slide the window one step, add the value entering on the right and subtract the value leaving on the left."
+  ],
+  "solution": "def busiest_window(requests, k):\n    if k < 1 or len(requests) < k:\n        return 0\n    window = sum(requests[:k])\n    best = window\n    for i in range(k, len(requests)):\n        window += requests[i] - requests[i - k]\n        best = max(best, window)\n    return best\n"
+}

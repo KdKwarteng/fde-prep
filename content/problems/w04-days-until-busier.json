@@ -1,0 +1,125 @@
+{
+  "id": "w04-days-until-busier",
+  "week": 4,
+  "order": 6,
+  "title": "Days until a busier day",
+  "difficulty": "medium",
+  "topic": "Monotonic stack",
+  "functionName": "days_until_busier",
+  "description": "An operations team wants to know, for each day, how long they had to wait until a strictly busier day arrived.\n\nWrite `days_until_busier(volumes)` where `volumes[i]` is the ticket volume on day `i`. Return a list where entry `i` is the number of days until the next day with a strictly higher volume, or `0` if there is none.\n\nA nested loop works but is O(n\u00b2). Aim for O(n).\n\n**Example**\n\n```\ndays_until_busier([30, 20, 25, 40, 10])\n# [3, 1, 1, 0, 0]\n```",
+  "starterCode": "def days_until_busier(volumes):\n    # volumes: list[int]\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          30,
+          20,
+          25,
+          40,
+          10
+        ]
+      ],
+      "expected": [
+        3,
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "args": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        [
+          5
+        ]
+      ],
+      "expected": [
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          7,
+          7,
+          7,
+          8
+        ]
+      ],
+      "expected": [
+        3,
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          73,
+          74,
+          75,
+          71,
+          69,
+          72,
+          76,
+          73
+        ]
+      ],
+      "expected": [
+        1,
+        1,
+        4,
+        2,
+        1,
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "hints": [
+    "Keep a stack of the indices of days still waiting for a busier day.",
+    "When a new day arrives, it answers every waiting day on top of the stack that has a lower volume. Pop those and fill in their answers.",
+    "Each index is pushed once and popped at most once, so the total work is O(n)."
+  ],
+  "solution": "def days_until_busier(volumes):\n    result = [0] * len(volumes)\n    waiting = []\n    for day, volume in enumerate(volumes):\n        while waiting and volumes[waiting[-1]] < volume:\n            earlier = waiting.pop()\n            result[earlier] = day - earlier\n        waiting.append(day)\n    return result\n"
+}

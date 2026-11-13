@@ -1,0 +1,85 @@
+{
+  "id": "w05-first-failing-build",
+  "week": 5,
+  "order": 2,
+  "title": "First failing build",
+  "difficulty": "easy",
+  "topic": "Binary search on a boundary",
+  "functionName": "first_failing",
+  "description": "A deployment started failing at some point and has failed ever since. You have the result of every build in order, where `False` means it passed and `True` means it failed. All the passes come before all the failures.\n\nWrite `first_failing(failed)` that returns the index of the first failing build, or `-1` if none failed. Use binary search so it would still be fast with millions of builds.\n\n**Example**\n\n```\nfirst_failing([False, False, True, True, True])\n# 2\n```",
+  "starterCode": "def first_failing(failed):\n    # failed: list[bool], all False values come before all True values\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          false,
+          false,
+          true,
+          true,
+          true
+        ]
+      ],
+      "expected": 2
+    },
+    {
+      "args": [
+        []
+      ],
+      "expected": -1
+    },
+    {
+      "args": [
+        [
+          false,
+          false
+        ]
+      ],
+      "expected": -1
+    },
+    {
+      "args": [
+        [
+          true
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "args": [
+        [
+          true,
+          true,
+          true
+        ]
+      ],
+      "expected": 0
+    },
+    {
+      "args": [
+        [
+          false,
+          true
+        ]
+      ],
+      "expected": 1
+    },
+    {
+      "args": [
+        [
+          false,
+          false,
+          false,
+          false,
+          true
+        ]
+      ],
+      "expected": 4
+    }
+  ],
+  "hints": [
+    "This is binary search for a boundary, not for a value.",
+    "If the middle build failed, the first failure is at the middle or to its left. If it passed, the first failure is strictly to the right.",
+    "Use `low < high` with `high = mid` and `low = mid + 1`, then check the build where they meet."
+  ],
+  "solution": "def first_failing(failed):\n    low, high = 0, len(failed)\n    while low < high:\n        mid = (low + high) // 2\n        if failed[mid]:\n            high = mid\n        else:\n            low = mid + 1\n    return low if low < len(failed) else -1\n"
+}

@@ -1,0 +1,82 @@
+{
+  "id": "w06-escalation-loop",
+  "week": 6,
+  "order": 3,
+  "title": "Find an escalation loop",
+  "difficulty": "easy",
+  "topic": "Linked structures and cycles",
+  "functionName": "has_loop",
+  "description": "Each support agent escalates tickets to exactly one other person, or to nobody. A misconfiguration can create a loop where a ticket bounces around forever.\n\nYou are given `escalates_to`, a dictionary from each person to the person they escalate to (or `None`), and a `start` person. Write `has_loop(escalates_to, start)` that returns `True` if following escalations from `start` ever revisits someone.\n\nEveryone who appears as a value is also a key.\n\n**Example**\n\n```\nhas_loop({\"ana\": \"ben\", \"ben\": \"cy\", \"cy\": \"ana\"}, \"ana\")    # True\nhas_loop({\"ana\": \"ben\", \"ben\": None}, \"ana\")                 # False\n```",
+  "starterCode": "def has_loop(escalates_to, start):\n    # escalates_to: dict[str, str | None], start: str\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        {
+          "ana": "ben",
+          "ben": "cy",
+          "cy": "ana"
+        },
+        "ana"
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        {
+          "ana": "ben",
+          "ben": null
+        },
+        "ana"
+      ],
+      "expected": false
+    },
+    {
+      "args": [
+        {
+          "solo": null
+        },
+        "solo"
+      ],
+      "expected": false
+    },
+    {
+      "args": [
+        {
+          "self": "self"
+        },
+        "self"
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        {
+          "a": "b",
+          "b": "c",
+          "c": "d",
+          "d": "b"
+        },
+        "a"
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        {
+          "a": "b",
+          "b": null,
+          "x": "y",
+          "y": "x"
+        },
+        "a"
+      ],
+      "expected": false
+    }
+  ],
+  "hints": [
+    "Follow the pointers one step at a time and remember everyone you have visited.",
+    "If you reach `None`, there is no loop. If you reach someone already visited, there is.",
+    "Stretch: do it with no extra memory using two walkers, one moving one step at a time and one moving two. If there is a loop, the fast one catches the slow one."
+  ],
+  "solution": "def has_loop(escalates_to, start):\n    slow = fast = start\n    while fast is not None and escalates_to[fast] is not None:\n        slow = escalates_to[slow]\n        fast = escalates_to[escalates_to[fast]]\n        if slow == fast:\n            return True\n    return False\n"
+}

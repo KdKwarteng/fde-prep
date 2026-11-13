@@ -1,0 +1,158 @@
+{
+  "id": "w06-deep-merge",
+  "week": 6,
+  "order": 5,
+  "title": "Layer customer overrides",
+  "difficulty": "medium",
+  "topic": "Recursion",
+  "functionName": "deep_merge",
+  "description": "Your product ships default settings, and each customer supplies overrides. Overrides may touch a single nested value without restating the whole section.\n\nWrite `deep_merge(defaults, overrides)` that returns a **new** dictionary where:\n\n1. Keys present in only one input are kept.\n2. If a key is in both and both values are dictionaries, they are merged by the same rules.\n3. Otherwise the value from `overrides` wins.\n\nDo not modify either input.\n\n**Example**\n\n```\ndeep_merge(\n    {\"ui\": {\"theme\": \"light\", \"lang\": \"en\"}, \"retries\": 3},\n    {\"ui\": {\"theme\": \"dark\"}, \"beta\": True},\n)\n# {\"ui\": {\"theme\": \"dark\", \"lang\": \"en\"}, \"retries\": 3, \"beta\": True}\n```",
+  "starterCode": "def deep_merge(defaults, overrides):\n    # defaults, overrides: dict, possibly nested\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        {
+          "ui": {
+            "theme": "light",
+            "lang": "en"
+          },
+          "retries": 3
+        },
+        {
+          "ui": {
+            "theme": "dark"
+          },
+          "beta": true
+        }
+      ],
+      "expected": {
+        "ui": {
+          "theme": "dark",
+          "lang": "en"
+        },
+        "retries": 3,
+        "beta": true
+      }
+    },
+    {
+      "args": [
+        {},
+        {}
+      ],
+      "expected": {}
+    },
+    {
+      "args": [
+        {
+          "a": 1
+        },
+        {}
+      ],
+      "expected": {
+        "a": 1
+      }
+    },
+    {
+      "args": [
+        {},
+        {
+          "a": {
+            "b": 1
+          }
+        }
+      ],
+      "expected": {
+        "a": {
+          "b": 1
+        }
+      }
+    },
+    {
+      "args": [
+        {
+          "a": {
+            "b": 1
+          }
+        },
+        {
+          "a": 5
+        }
+      ],
+      "expected": {
+        "a": 5
+      }
+    },
+    {
+      "args": [
+        {
+          "a": 5
+        },
+        {
+          "a": {
+            "b": 1
+          }
+        }
+      ],
+      "expected": {
+        "a": {
+          "b": 1
+        }
+      }
+    },
+    {
+      "args": [
+        {
+          "a": {
+            "b": {
+              "c": 1,
+              "d": 2
+            }
+          }
+        },
+        {
+          "a": {
+            "b": {
+              "d": 3,
+              "e": 4
+            }
+          }
+        }
+      ],
+      "expected": {
+        "a": {
+          "b": {
+            "c": 1,
+            "d": 3,
+            "e": 4
+          }
+        }
+      }
+    },
+    {
+      "args": [
+        {
+          "l": [
+            1,
+            2
+          ]
+        },
+        {
+          "l": [
+            3
+          ]
+        }
+      ],
+      "expected": {
+        "l": [
+          3
+        ]
+      }
+    }
+  ],
+  "hints": [
+    "Start from a shallow copy of `defaults`, then walk the items in `overrides`.",
+    "Recurse only when the key exists in both and both values are dictionaries.",
+    "The tests cannot see whether you modified the inputs, but a customer's defaults being silently changed is a real bug. Build new dictionaries as you go."
+  ],
+  "solution": "def deep_merge(defaults, overrides):\n    merged = dict(defaults)\n    for key, value in overrides.items():\n        if isinstance(value, dict) and isinstance(merged.get(key), dict):\n            merged[key] = deep_merge(merged[key], value)\n        else:\n            merged[key] = value\n    return merged\n"
+}

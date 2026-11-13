@@ -1,0 +1,106 @@
+{
+  "id": "w05-smallest-batch-size",
+  "week": 5,
+  "order": 6,
+  "title": "Smallest batch size that meets the deadline",
+  "difficulty": "medium",
+  "topic": "Binary search on the answer",
+  "functionName": "smallest_batch",
+  "description": "A customer must migrate a queue of jobs, in order, within `days` days. Each day they can run a batch of consecutive jobs whose sizes add up to at most the batch capacity. Bigger capacity costs more, so they want the smallest capacity that still finishes on time.\n\nWrite `smallest_batch(jobs, days)` where `jobs` is a list of positive job sizes. Return the minimum capacity such that all jobs can be run in order within `days` days. A job cannot be split across days.\n\n**Example**\n\n```\nsmallest_batch([3, 2, 2, 4, 1, 4], 3)\n# 6   (days: [3, 2] [2, 4] [1, 4])\n```",
+  "starterCode": "def smallest_batch(jobs, days):\n    # jobs: non-empty list[int] (positive), days: int >= 1\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          3,
+          2,
+          2,
+          4,
+          1,
+          4
+        ],
+        3
+      ],
+      "expected": 6
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        5
+      ],
+      "expected": 15
+    },
+    {
+      "args": [
+        [
+          5
+        ],
+        1
+      ],
+      "expected": 5
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          1
+        ],
+        4
+      ],
+      "expected": 3
+    },
+    {
+      "args": [
+        [
+          7,
+          7,
+          7
+        ],
+        3
+      ],
+      "expected": 7
+    },
+    {
+      "args": [
+        [
+          7,
+          7,
+          7
+        ],
+        1
+      ],
+      "expected": 21
+    },
+    {
+      "args": [
+        [
+          2,
+          9,
+          2
+        ],
+        10
+      ],
+      "expected": 9
+    }
+  ],
+  "hints": [
+    "Do not search over the jobs. Search over the possible answers.",
+    "The capacity must be at least the largest job, and never needs to exceed the sum of all jobs. That is your search range.",
+    "Write a helper that, for a given capacity, counts how many days a greedy fill takes. If it fits in `days`, try smaller. Otherwise go larger."
+  ],
+  "solution": "def smallest_batch(jobs, days):\n    def days_needed(capacity):\n        used, load = 1, 0\n        for job in jobs:\n            if load + job > capacity:\n                used += 1\n                load = 0\n            load += job\n        return used\n\n    low, high = max(jobs), sum(jobs)\n    while low < high:\n        mid = (low + high) // 2\n        if days_needed(mid) <= days:\n            high = mid\n        else:\n            low = mid + 1\n    return low\n"
+}

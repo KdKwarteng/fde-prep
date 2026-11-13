@@ -1,0 +1,67 @@
+{
+  "id": "w04-resolve-path",
+  "week": 4,
+  "order": 3,
+  "title": "Resolve a file path",
+  "difficulty": "medium",
+  "topic": "Stacks and parsing",
+  "functionName": "resolve_path",
+  "description": "A customer's job definitions reference files with messy absolute paths like `/data/./raw/../clean//2026/`.\n\nWrite `resolve_path(path)` that returns the canonical form:\n\n1. `.` means the current directory and is dropped.\n2. `..` moves up one directory. At the root it does nothing.\n3. Repeated slashes count as one.\n4. The result starts with `/` and has no trailing slash, unless it is just `/`.\n\nThe input always starts with `/`.\n\n**Example**\n\n```\nresolve_path(\"/data/./raw/../clean//2026/\")\n# \"/data/clean/2026\"\n```",
+  "starterCode": "def resolve_path(path):\n    # path: str starting with '/'\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        "/data/./raw/../clean//2026/"
+      ],
+      "expected": "/data/clean/2026"
+    },
+    {
+      "args": [
+        "/"
+      ],
+      "expected": "/"
+    },
+    {
+      "args": [
+        "/../.."
+      ],
+      "expected": "/"
+    },
+    {
+      "args": [
+        "/a/b/c"
+      ],
+      "expected": "/a/b/c"
+    },
+    {
+      "args": [
+        "/a/../../b"
+      ],
+      "expected": "/b"
+    },
+    {
+      "args": [
+        "//x///y/."
+      ],
+      "expected": "/x/y"
+    },
+    {
+      "args": [
+        "/..."
+      ],
+      "expected": "/..."
+    },
+    {
+      "args": [
+        "/a/b/../.."
+      ],
+      "expected": "/"
+    }
+  ],
+  "hints": [
+    "Split on `/`. Empty strings and `.` can be ignored.",
+    "Keep a stack of directory names. `..` pops if the stack is not empty.",
+    "Join the stack with `/` and put one `/` in front."
+  ],
+  "solution": "def resolve_path(path):\n    stack = []\n    for part in path.split(\"/\"):\n        if part in (\"\", \".\"):\n            continue\n        if part == \"..\":\n            if stack:\n                stack.pop()\n        else:\n            stack.append(part)\n    return \"/\" + \"/\".join(stack)\n"
+}

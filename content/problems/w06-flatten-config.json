@@ -1,0 +1,106 @@
+{
+  "id": "w06-flatten-config",
+  "week": 6,
+  "order": 4,
+  "title": "Flatten a nested config",
+  "difficulty": "medium",
+  "topic": "Recursion",
+  "functionName": "flatten",
+  "description": "A customer's settings arrive as nested JSON, but the system you are loading them into only accepts flat keys joined by dots.\n\nWrite `flatten(config)` that turns a nested dictionary into a flat one. Nested keys are joined with `.`. Values that are not dictionaries are kept as they are, including lists. An empty nested dictionary produces no keys.\n\n**Example**\n\n```\nflatten({\"db\": {\"host\": \"x\", \"pool\": {\"max\": 5}}, \"debug\": False})\n# {\"db.host\": \"x\", \"db.pool.max\": 5, \"debug\": False}\n```",
+  "starterCode": "def flatten(config):\n    # config: dict, possibly nested\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        {
+          "db": {
+            "host": "x",
+            "pool": {
+              "max": 5
+            }
+          },
+          "debug": false
+        }
+      ],
+      "expected": {
+        "db.host": "x",
+        "db.pool.max": 5,
+        "debug": false
+      }
+    },
+    {
+      "args": [
+        {}
+      ],
+      "expected": {}
+    },
+    {
+      "args": [
+        {
+          "a": 1
+        }
+      ],
+      "expected": {
+        "a": 1
+      }
+    },
+    {
+      "args": [
+        {
+          "a": {
+            "b": {
+              "c": {
+                "d": 1
+              }
+            }
+          }
+        }
+      ],
+      "expected": {
+        "a.b.c.d": 1
+      }
+    },
+    {
+      "args": [
+        {
+          "a": {},
+          "b": [
+            1,
+            {
+              "x": 2
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "b": [
+          1,
+          {
+            "x": 2
+          }
+        ]
+      }
+    },
+    {
+      "args": [
+        {
+          "x": {
+            "y": null
+          },
+          "z": {
+            "y": 0
+          }
+        }
+      ],
+      "expected": {
+        "x.y": null,
+        "z.y": 0
+      }
+    }
+  ],
+  "hints": [
+    "Write a helper that takes a dictionary and the key prefix built so far.",
+    "For each item: if the value is a dict, recurse with the longer prefix. Otherwise store it under the full key.",
+    "`isinstance(value, dict)` is the check you need."
+  ],
+  "solution": "def flatten(config, prefix=\"\"):\n    flat = {}\n    for key, value in config.items():\n        full_key = f\"{prefix}.{key}\" if prefix else key\n        if isinstance(value, dict):\n            flat.update(flatten(value, full_key))\n        else:\n            flat[full_key] = value\n    return flat\n"
+}

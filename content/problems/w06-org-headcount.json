@@ -1,0 +1,114 @@
+{
+  "id": "w06-org-headcount",
+  "week": 6,
+  "order": 6,
+  "title": "Headcount under each manager",
+  "difficulty": "medium",
+  "topic": "Recursion on trees",
+  "functionName": "headcounts",
+  "description": "A customer's org chart is a tree. Each person is a dictionary with a `name` and a list of direct `reports`, each of which has the same shape.\n\nWrite `headcounts(person)` that returns a dictionary from every person's name to the size of their organization: themselves plus everyone below them. Names are unique.\n\n**Example**\n\n```\nheadcounts({\n    \"name\": \"dee\",\n    \"reports\": [\n        {\"name\": \"eli\", \"reports\": [{\"name\": \"fay\", \"reports\": []}]},\n        {\"name\": \"gus\", \"reports\": []},\n    ],\n})\n# {\"dee\": 4, \"eli\": 2, \"fay\": 1, \"gus\": 1}\n```",
+  "starterCode": "def headcounts(person):\n    # person: {\"name\": str, \"reports\": list of the same shape}\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        {
+          "name": "dee",
+          "reports": [
+            {
+              "name": "eli",
+              "reports": [
+                {
+                  "name": "fay",
+                  "reports": []
+                }
+              ]
+            },
+            {
+              "name": "gus",
+              "reports": []
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "dee": 4,
+        "eli": 2,
+        "fay": 1,
+        "gus": 1
+      }
+    },
+    {
+      "args": [
+        {
+          "name": "solo",
+          "reports": []
+        }
+      ],
+      "expected": {
+        "solo": 1
+      }
+    },
+    {
+      "args": [
+        {
+          "name": "a",
+          "reports": [
+            {
+              "name": "b",
+              "reports": [
+                {
+                  "name": "c",
+                  "reports": [
+                    {
+                      "name": "d",
+                      "reports": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "a": 4,
+        "b": 3,
+        "c": 2,
+        "d": 1
+      }
+    },
+    {
+      "args": [
+        {
+          "name": "r",
+          "reports": [
+            {
+              "name": "x",
+              "reports": []
+            },
+            {
+              "name": "y",
+              "reports": []
+            },
+            {
+              "name": "z",
+              "reports": []
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "r": 4,
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  ],
+  "hints": [
+    "A person's headcount is 1 plus the headcounts of their direct reports.",
+    "Write a helper that returns one person's count and, as it goes, records that count in a shared dictionary.",
+    "Each person is visited exactly once, so this is O(n) even for a deep org."
+  ],
+  "solution": "def headcounts(person):\n    counts = {}\n\n    def visit(node):\n        total = 1 + sum(visit(report) for report in node[\"reports\"])\n        counts[node[\"name\"]] = total\n        return total\n\n    visit(person)\n    return counts\n"
+}

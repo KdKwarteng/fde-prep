@@ -1,0 +1,61 @@
+{
+  "id": "w03-mirrored-code",
+  "week": 3,
+  "order": 2,
+  "title": "Mirrored reference code",
+  "difficulty": "easy",
+  "topic": "Two pointers",
+  "functionName": "is_mirrored",
+  "description": "A customer's legacy system marks test records with reference codes that read the same forwards and backwards once you ignore punctuation, spaces, and letter case.\n\nWrite `is_mirrored(code)` that returns `True` if the code is mirrored under those rules. Only letters and digits count. An input with no letters or digits counts as mirrored.\n\n**Example**\n\n```\nis_mirrored(\"AB-12 21:ba\")   # True\nis_mirrored(\"AB-12\")         # False\n```",
+  "starterCode": "def is_mirrored(code):\n    # code: str\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        "AB-12 21:ba"
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        "AB-12"
+      ],
+      "expected": false
+    },
+    {
+      "args": [
+        ""
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        "--::"
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        "x"
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        "Never odd, or even."
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        "0P"
+      ],
+      "expected": false
+    }
+  ],
+  "hints": [
+    "Use one index at each end and move them toward each other.",
+    "`ch.isalnum()` tells you whether a character counts. Skip the ones that do not.",
+    "Compare with `.lower()` on both sides."
+  ],
+  "solution": "def is_mirrored(code):\n    left, right = 0, len(code) - 1\n    while left < right:\n        if not code[left].isalnum():\n            left += 1\n        elif not code[right].isalnum():\n            right -= 1\n        elif code[left].lower() != code[right].lower():\n            return False\n        else:\n            left += 1\n            right -= 1\n    return True\n"
+}
