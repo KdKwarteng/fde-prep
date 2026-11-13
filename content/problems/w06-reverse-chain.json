@@ -1,0 +1,115 @@
+{
+  "id": "w06-reverse-chain",
+  "week": 6,
+  "order": 1,
+  "title": "Reverse an approval chain",
+  "difficulty": "easy",
+  "topic": "Linked lists",
+  "functionName": "reverse_chain",
+  "description": "A workflow tool stores each approval chain as a linked list, and a customer wants to walk one from the last approver back to the first.\n\nA chain is a linked list built from dictionaries. Each node looks like `{\"value\": 1, \"next\": <node or None>}`, and an empty chain is `None`.\n\nWrite `reverse_chain(head)` that returns the head of the reversed chain. Re-point the `next` links. Do not copy the values into a list and rebuild.\n\n**Example**\n\n```\nreverse_chain({\"value\": 1, \"next\": {\"value\": 2, \"next\": None}})\n# {\"value\": 2, \"next\": {\"value\": 1, \"next\": None}}\n```",
+  "starterCode": "def reverse_chain(head):\n    # head: dict node or None\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        {
+          "value": 1,
+          "next": {
+            "value": 2,
+            "next": null
+          }
+        }
+      ],
+      "expected": {
+        "value": 2,
+        "next": {
+          "value": 1,
+          "next": null
+        }
+      }
+    },
+    {
+      "args": [
+        null
+      ],
+      "expected": null
+    },
+    {
+      "args": [
+        {
+          "value": 7,
+          "next": null
+        }
+      ],
+      "expected": {
+        "value": 7,
+        "next": null
+      }
+    },
+    {
+      "args": [
+        {
+          "value": 1,
+          "next": {
+            "value": 2,
+            "next": {
+              "value": 3,
+              "next": {
+                "value": 4,
+                "next": {
+                  "value": 5,
+                  "next": null
+                }
+              }
+            }
+          }
+        }
+      ],
+      "expected": {
+        "value": 5,
+        "next": {
+          "value": 4,
+          "next": {
+            "value": 3,
+            "next": {
+              "value": 2,
+              "next": {
+                "value": 1,
+                "next": null
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "args": [
+        {
+          "value": "a",
+          "next": {
+            "value": "b",
+            "next": {
+              "value": "c",
+              "next": null
+            }
+          }
+        }
+      ],
+      "expected": {
+        "value": "c",
+        "next": {
+          "value": "b",
+          "next": {
+            "value": "a",
+            "next": null
+          }
+        }
+      }
+    }
+  ],
+  "hints": [
+    "Walk the chain with three names: the previous node, the current node, and the next node.",
+    "At each step, save `current[\"next\"]`, point `current[\"next\"]` at `previous`, then advance both.",
+    "When `current` becomes `None`, `previous` is the new head."
+  ],
+  "solution": "def reverse_chain(head):\n    previous = None\n    current = head\n    while current is not None:\n        following = current[\"next\"]\n        current[\"next\"] = previous\n        previous = current\n        current = following\n    return previous\n"
+}

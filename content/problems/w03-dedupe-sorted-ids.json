@@ -1,0 +1,96 @@
+{
+  "id": "w03-dedupe-sorted-ids",
+  "week": 3,
+  "order": 1,
+  "title": "Dedupe sorted IDs",
+  "difficulty": "easy",
+  "topic": "Two pointers",
+  "functionName": "dedupe_sorted",
+  "description": "An export of customer IDs arrives sorted, but a join upstream duplicated some rows.\n\nWrite `dedupe_sorted(ids)` that returns the IDs with duplicates removed, still in sorted order.\n\nThe input is already sorted, so equal values are always next to each other. Use that fact: solve it in one pass without a `set` and without sorting.\n\n**Example**\n\n```\ndedupe_sorted([1, 1, 2, 5, 5, 5, 9])\n# [1, 2, 5, 9]\n```",
+  "starterCode": "def dedupe_sorted(ids):\n    # ids: sorted list[int]\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          1,
+          1,
+          2,
+          5,
+          5,
+          5,
+          9
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        5,
+        9
+      ]
+    },
+    {
+      "args": [
+        []
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        [
+          7
+        ]
+      ],
+      "expected": [
+        7
+      ]
+    },
+    {
+      "args": [
+        [
+          3,
+          3,
+          3,
+          3
+        ]
+      ],
+      "expected": [
+        3
+      ]
+    },
+    {
+      "args": [
+        [
+          -2,
+          -2,
+          0,
+          1,
+          1
+        ]
+      ],
+      "expected": [
+        -2,
+        0,
+        1
+      ]
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "hints": [
+    "Compare each value with the last value you kept.",
+    "`result[-1]` is the last item in a list. Check that `result` is not empty first."
+  ],
+  "solution": "def dedupe_sorted(ids):\n    result = []\n    for value in ids:\n        if not result or result[-1] != value:\n            result.append(value)\n    return result\n"
+}

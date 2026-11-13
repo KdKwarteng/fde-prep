@@ -78,7 +78,7 @@ Then open http://localhost:3000.
 | `npm run lint` | ESLint |
 | `npm run verify` | Run every problem's reference solution against its tests |
 
-`dev` and `build` first run `scripts/copy-pyodide.mjs`, which copies the Pyodide runtime from `node_modules` into `public/pyodide/`. That folder is git-ignored.
+`dev` and `build` first run two small scripts. `scripts/copy-pyodide.mjs` copies the Pyodide runtime from `node_modules` into `public/pyodide/`, and `scripts/build-problem-index.mjs` builds the problem index. Both outputs are git-ignored.
 
 ## How the code works
 
@@ -90,7 +90,8 @@ The curriculum and the problems are plain data, kept apart from the interface.
 
 - `src/data/curriculum.ts` holds the four phases and all 26 weeks. Each week has a title, a coding focus, a build task, and a design or customer task.
 - `content/problems/*.json` holds one file per coding problem.
-- `src/data/problems.ts` imports those JSON files, gives them a `Problem` type, and exposes `getProblem(id)` and `problemsForWeek(n)`.
+- `scripts/build-problem-index.mjs` combines those files into one generated JSON index before each `dev` or `build`.
+- `src/data/problems.ts` imports that index, gives it a `Problem` type, and exposes `getProblem(id)` and `problemsForWeek(n)`.
 
 A problem file looks like this (shortened):
 
@@ -208,6 +209,7 @@ public/
   pyodide/                Pyodide runtime, copied at build time (git-ignored)
 scripts/
   copy-pyodide.mjs        Copies Pyodide out of node_modules
+  build-problem-index.mjs Combines content/problems into one index
   verify_problems.py      Checks every problem's solution against its tests
 src/
   app/                    Routes and the root layout
@@ -232,8 +234,9 @@ src/
 ## Add a problem
 
 1. Create `content/problems/<id>.json`, using an existing file as a template. The `id` must match the file name. By convention ids start with the week, as in `w03-...`.
-2. Import the file in `src/data/problems.ts` and add it to the array.
-3. Run `npm run verify`.
+2. Run `npm run verify`.
+
+The problem index is rebuilt from the folder each time you run `dev` or `build`, so there is nothing to register by hand.
 
 Test arguments and expected values must be valid JSON. That means no tuples, sets, or non-string dictionary keys in `expected`. Return a list or a string-keyed dictionary from the reference solution.
 
@@ -244,6 +247,6 @@ The site has no server-side state, so the simplest route is [Vercel](https://ver
 ## Limitations and next steps
 
 - **Progress lives in one browser.** There are no accounts and no database, so progress does not sync between devices and is lost if you clear site data. Adding sign-in and a small database (for example GitHub login with Supabase) would fix this and is the natural next feature.
-- **Problem sets exist for weeks 1 and 2.** Later weeks show their focus topic and tasks, with problems still to be written.
+- **Problem sets exist for weeks 1 to 6.** Later weeks show their focus topic and tasks, with problems still to be written.
 - **Standard library only.** Solutions can import anything in Python's standard library. Third-party packages such as `numpy` are not loaded.
-- **Single-function problems.** Every problem tests one function with JSON inputs and outputs. Class-based problems, such as an LRU cache, will need a small extension to the harness.
+- **Single-function problems.** Every problem tests one function with JSON inputs and outputs, so linked lists are represented as nested dictionaries. Class-based problems, such as an LRU cache, will need a small extension to the harness.

@@ -1,0 +1,67 @@
+{
+  "id": "w04-balanced-brackets",
+  "week": 4,
+  "order": 1,
+  "title": "Balanced brackets",
+  "difficulty": "easy",
+  "topic": "Stacks",
+  "functionName": "is_balanced",
+  "description": "Before loading a customer's templated config, you want a quick sanity check that its brackets match up.\n\nWrite `is_balanced(text)` that returns `True` if every `(`, `[`, and `{` is closed by the right kind of bracket in the right order. Ignore every other character.\n\n**Example**\n\n```\nis_balanced(\"{users: [a, (b)]}\")   # True\nis_balanced(\"(]\")                  # False\nis_balanced(\"((\")                  # False\n```",
+  "starterCode": "def is_balanced(text):\n    # text: str\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        "{users: [a, (b)]}"
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        "(]"
+      ],
+      "expected": false
+    },
+    {
+      "args": [
+        "(("
+      ],
+      "expected": false
+    },
+    {
+      "args": [
+        ""
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        "no brackets here"
+      ],
+      "expected": true
+    },
+    {
+      "args": [
+        "())"
+      ],
+      "expected": false
+    },
+    {
+      "args": [
+        "([)]"
+      ],
+      "expected": false
+    },
+    {
+      "args": [
+        "}{"
+      ],
+      "expected": false
+    }
+  ],
+  "hints": [
+    "A Python list is a stack: `append` pushes and `pop` removes the most recent item.",
+    "Push each opening bracket. On a closing bracket, the top of the stack must be its partner.",
+    "A dict from closing bracket to opening bracket keeps the matching logic to one line. Do not forget the stack must be empty at the end."
+  ],
+  "solution": "def is_balanced(text):\n    pairs = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}\n    stack = []\n    for ch in text:\n        if ch in \"([{\":\n            stack.append(ch)\n        elif ch in pairs:\n            if not stack or stack.pop() != pairs[ch]:\n                return False\n    return not stack\n"
+}

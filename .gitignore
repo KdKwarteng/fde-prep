@@ -45,3 +45,6 @@ next-env.d.ts
 
 # Python
 __pycache__/
+
+# Built by scripts/build-problem-index.mjs
+/src/data/problems.generated.json

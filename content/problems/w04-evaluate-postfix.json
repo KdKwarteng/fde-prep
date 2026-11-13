@@ -1,0 +1,105 @@
+{
+  "id": "w04-evaluate-postfix",
+  "week": 4,
+  "order": 4,
+  "title": "Evaluate a pricing formula",
+  "difficulty": "medium",
+  "topic": "Stacks",
+  "functionName": "evaluate",
+  "description": "A customer's pricing engine stores formulas in postfix form, where each operator comes after its two operands. For example `[\"3\", \"4\", \"+\", \"2\", \"*\"]` means `(3 + 4) * 2`.\n\nWrite `evaluate(tokens)` that returns the integer result. Tokens are integers (possibly negative) or one of `+`, `-`, `*`, `/`. Division truncates toward zero, so `-7 / 2` is `-3`. The input is always a valid formula.\n\n**Example**\n\n```\nevaluate([\"3\", \"4\", \"+\", \"2\", \"*\"])   # 14\nevaluate([\"7\", \"2\", \"/\"])             # 3\n```",
+  "starterCode": "def evaluate(tokens):\n    # tokens: list[str]\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          "3",
+          "4",
+          "+",
+          "2",
+          "*"
+        ]
+      ],
+      "expected": 14
+    },
+    {
+      "args": [
+        [
+          "7",
+          "2",
+          "/"
+        ]
+      ],
+      "expected": 3
+    },
+    {
+      "args": [
+        [
+          "-7",
+          "2",
+          "/"
+        ]
+      ],
+      "expected": -3
+    },
+    {
+      "args": [
+        [
+          "42"
+        ]
+      ],
+      "expected": 42
+    },
+    {
+      "args": [
+        [
+          "5",
+          "1",
+          "2",
+          "+",
+          "4",
+          "*",
+          "+",
+          "3",
+          "-"
+        ]
+      ],
+      "expected": 14
+    },
+    {
+      "args": [
+        [
+          "2",
+          "3",
+          "-"
+        ]
+      ],
+      "expected": -1
+    },
+    {
+      "args": [
+        [
+          "10",
+          "6",
+          "9",
+          "3",
+          "+",
+          "-11",
+          "*",
+          "/",
+          "*",
+          "17",
+          "+",
+          "5",
+          "+"
+        ]
+      ],
+      "expected": 22
+    }
+  ],
+  "hints": [
+    "Push numbers. On an operator, pop two values, apply it, and push the result.",
+    "Order matters for `-` and `/`: the first value you pop is the right-hand operand.",
+    "Python's `//` rounds down, not toward zero. `int(a / b)` truncates toward zero."
+  ],
+  "solution": "def evaluate(tokens):\n    stack = []\n    for token in tokens:\n        if token in (\"+\", \"-\", \"*\", \"/\"):\n            right = stack.pop()\n            left = stack.pop()\n            if token == \"+\":\n                stack.append(left + right)\n            elif token == \"-\":\n                stack.append(left - right)\n            elif token == \"*\":\n                stack.append(left * right)\n            else:\n                stack.append(int(left / right))\n        else:\n            stack.append(int(token))\n    return stack[0]\n"
+}

@@ -1,0 +1,181 @@
+{
+  "id": "w06-merge-sorted-chains",
+  "week": 6,
+  "order": 2,
+  "title": "Merge two sorted chains",
+  "difficulty": "easy",
+  "topic": "Linked lists",
+  "functionName": "merge_chains",
+  "description": "Two regional systems each produce an event stream sorted by timestamp, stored as linked lists. You need one combined stream, still sorted.\n\nA chain is a linked list built from dictionaries. Each node looks like `{\"value\": 1, \"next\": <node or None>}`, and an empty chain is `None`.\n\nWrite `merge_chains(a, b)` that merges two chains sorted ascending by `value` and returns the head of the merged chain. When values tie, take the node from `a` first.\n\n**Example**\n\n```\na = 1 -> 4 -> 9\nb = 2 -> 4\nmerge_chains(a, b)   # 1 -> 2 -> 4 -> 4 -> 9\n```",
+  "starterCode": "def merge_chains(a, b):\n    # a, b: dict node or None\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        {
+          "value": 1,
+          "next": {
+            "value": 4,
+            "next": {
+              "value": 9,
+              "next": null
+            }
+          }
+        },
+        {
+          "value": 2,
+          "next": {
+            "value": 4,
+            "next": null
+          }
+        }
+      ],
+      "expected": {
+        "value": 1,
+        "next": {
+          "value": 2,
+          "next": {
+            "value": 4,
+            "next": {
+              "value": 4,
+              "next": {
+                "value": 9,
+                "next": null
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "args": [
+        null,
+        null
+      ],
+      "expected": null
+    },
+    {
+      "args": [
+        {
+          "value": 1,
+          "next": {
+            "value": 2,
+            "next": null
+          }
+        },
+        null
+      ],
+      "expected": {
+        "value": 1,
+        "next": {
+          "value": 2,
+          "next": null
+        }
+      }
+    },
+    {
+      "args": [
+        null,
+        {
+          "value": 3,
+          "next": null
+        }
+      ],
+      "expected": {
+        "value": 3,
+        "next": null
+      }
+    },
+    {
+      "args": [
+        {
+          "value": 5,
+          "next": {
+            "value": 6,
+            "next": {
+              "value": 7,
+              "next": null
+            }
+          }
+        },
+        {
+          "value": 1,
+          "next": {
+            "value": 2,
+            "next": {
+              "value": 3,
+              "next": null
+            }
+          }
+        }
+      ],
+      "expected": {
+        "value": 1,
+        "next": {
+          "value": 2,
+          "next": {
+            "value": 3,
+            "next": {
+              "value": 5,
+              "next": {
+                "value": 6,
+                "next": {
+                  "value": 7,
+                  "next": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "args": [
+        {
+          "value": 1,
+          "next": {
+            "value": 3,
+            "next": {
+              "value": 5,
+              "next": null
+            }
+          }
+        },
+        {
+          "value": 2,
+          "next": {
+            "value": 4,
+            "next": {
+              "value": 6,
+              "next": null
+            }
+          }
+        }
+      ],
+      "expected": {
+        "value": 1,
+        "next": {
+          "value": 2,
+          "next": {
+            "value": 3,
+            "next": {
+              "value": 4,
+              "next": {
+                "value": 5,
+                "next": {
+                  "value": 6,
+                  "next": null
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "hints": [
+    "A placeholder first node saves you from special-casing the head. Build onto it, then return its `next`.",
+    "Keep a `tail` name pointing at the last node of the merged chain. Attach the smaller of the two front nodes and advance that chain.",
+    "When one chain runs out, attach whatever is left of the other in one step."
+  ],
+  "solution": "def merge_chains(a, b):\n    placeholder = {\"value\": None, \"next\": None}\n    tail = placeholder\n    while a is not None and b is not None:\n        if a[\"value\"] <= b[\"value\"]:\n            tail[\"next\"] = a\n            a = a[\"next\"]\n        else:\n            tail[\"next\"] = b\n            b = b[\"next\"]\n        tail = tail[\"next\"]\n    tail[\"next\"] = a if a is not None else b\n    return placeholder[\"next\"]\n"
+}

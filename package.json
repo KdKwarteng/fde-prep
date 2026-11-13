@@ -8,8 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "verify": "python3 scripts/verify_problems.py",
-    "predev": "node scripts/copy-pyodide.mjs",
-    "prebuild": "node scripts/copy-pyodide.mjs"
+    "predev": "npm run prepare:content",
+    "prebuild": "npm run prepare:content",
+    "prepare:content": "node scripts/copy-pyodide.mjs && node scripts/build-problem-index.mjs",
+    "prelint": "node scripts/build-problem-index.mjs"
   },
   "dependencies": {
     "@codemirror/lang-python": "^6.2.1",

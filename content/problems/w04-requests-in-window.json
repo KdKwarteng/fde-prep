@@ -1,0 +1,122 @@
+{
+  "id": "w04-requests-in-window",
+  "week": 4,
+  "order": 5,
+  "title": "Requests in the last window",
+  "difficulty": "medium",
+  "topic": "Queues",
+  "functionName": "window_counts",
+  "description": "You are building a rate limiter for a customer. For every incoming request you need to know how many requests, including this one, arrived within the last `window` seconds.\n\nWrite `window_counts(timestamps, window)` where `timestamps` is a list of arrival times in seconds, sorted ascending. Return a list where entry `i` is the number of requests with a time in the range `[timestamps[i] - window, timestamps[i]]`, both ends included.\n\n**Example**\n\n```\nwindow_counts([1, 2, 10, 11, 12], 5)\n# [1, 2, 1, 2, 3]\n```",
+  "starterCode": "def window_counts(timestamps, window):\n    # timestamps: sorted list[int], window: int >= 0\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        [
+          1,
+          2,
+          10,
+          11,
+          12
+        ],
+        5
+      ],
+      "expected": [
+        1,
+        2,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "args": [
+        [],
+        5
+      ],
+      "expected": []
+    },
+    {
+      "args": [
+        [
+          4
+        ],
+        0
+      ],
+      "expected": [
+        1
+      ]
+    },
+    {
+      "args": [
+        [
+          1,
+          1,
+          1
+        ],
+        0
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "args": [
+        [
+          0,
+          5,
+          10
+        ],
+        5
+      ],
+      "expected": [
+        1,
+        2,
+        2
+      ]
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        100
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "args": [
+        [
+          0,
+          3,
+          6,
+          9
+        ],
+        2
+      ],
+      "expected": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "hints": [
+    "Keep a queue of the timestamps that are still inside the window.",
+    "For each new time, drop expired times from the front, then the queue length is the answer.",
+    "`collections.deque` gives O(1) `popleft`. Popping from the front of a list is O(n)."
+  ],
+  "solution": "from collections import deque\n\ndef window_counts(timestamps, window):\n    recent = deque()\n    counts = []\n    for time in timestamps:\n        recent.append(time)\n        while recent[0] < time - window:\n            recent.popleft()\n        counts.append(len(recent))\n    return counts\n"
+}

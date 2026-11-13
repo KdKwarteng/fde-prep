@@ -1,0 +1,61 @@
+{
+  "id": "w03-longest-unique-run",
+  "week": 3,
+  "order": 5,
+  "title": "Longest run without a repeat",
+  "difficulty": "medium",
+  "topic": "Sliding window",
+  "functionName": "longest_unique_run",
+  "description": "A fraud team looks at the sequence of pages a session visits, encoded as one character per page. They want the longest stretch in which no page was visited twice.\n\nWrite `longest_unique_run(pages)` that returns the length of the longest contiguous substring with no repeated character.\n\n**Example**\n\n```\nlongest_unique_run(\"abcabcbb\")   # 3   (\"abc\")\nlongest_unique_run(\"pwwkew\")     # 3   (\"wke\")\n```",
+  "starterCode": "def longest_unique_run(pages):\n    # pages: str\n    pass\n",
+  "tests": [
+    {
+      "args": [
+        "abcabcbb"
+      ],
+      "expected": 3
+    },
+    {
+      "args": [
+        "pwwkew"
+      ],
+      "expected": 3
+    },
+    {
+      "args": [
+        ""
+      ],
+      "expected": 0
+    },
+    {
+      "args": [
+        "aaaa"
+      ],
+      "expected": 1
+    },
+    {
+      "args": [
+        "abcdef"
+      ],
+      "expected": 6
+    },
+    {
+      "args": [
+        "abba"
+      ],
+      "expected": 2
+    },
+    {
+      "args": [
+        "dvdf"
+      ],
+      "expected": 3
+    }
+  ],
+  "hints": [
+    "Keep a window `[start, end]` that never contains a repeat.",
+    "Remember the last index where you saw each character in a dict.",
+    "When the current character was last seen inside the window, jump `start` to just past that index. Be careful not to move `start` backward."
+  ],
+  "solution": "def longest_unique_run(pages):\n    last_seen = {}\n    start = 0\n    best = 0\n    for end, page in enumerate(pages):\n        if page in last_seen and last_seen[page] >= start:\n            start = last_seen[page] + 1\n        last_seen[page] = end\n        best = max(best, end - start + 1)\n    return best\n"
+}
