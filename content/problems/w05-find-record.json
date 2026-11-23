@@ -104,5 +104,15 @@
     "If the middle value is too small, the target can only be to the right, so set `low = mid + 1`. Mirror that for too large.",
     "Loop while `low <= high`. Getting this condition and the `+ 1` / `- 1` right is the whole problem."
   ],
-  "solution": "def find_record(ids, target):\n    low, high = 0, len(ids) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if ids[mid] == target:\n            return mid\n        if ids[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n"
+  "solution": "def find_record(ids, target):\n    low, high = 0, len(ids) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if ids[mid] == target:\n            return mid\n        if ids[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n",
+  "java": {
+    "methodName": "findRecord",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int findRecord(int[] ids, int target) {\n        // Your code here\n        return 0;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int findRecord(int[] ids, int target) {\n        int low = 0, high = ids.length - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (ids[mid] == target) return mid;\n            if (ids[mid] < target) low = mid + 1;\n            else high = mid - 1;\n        }\n        return -1;\n    }\n}\n",
+    "hints": [
+      "Keep `low` and `high` bounds and look at the middle.",
+      "`low + (high - low) / 2` avoids int overflow, a classic interview follow-up.",
+      "Do not use `Arrays.binarySearch` for this one."
+    ]
+  }
 }

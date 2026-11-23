@@ -77,5 +77,14 @@
     "A day starts a streak only if `day - 1` is not in the set. Count forward only from those starts.",
     "Each day is visited at most twice this way, so the total work is O(n)."
   ],
-  "solution": "def longest_streak(days):\n    active = set(days)\n    best = 0\n    for day in active:\n        if day - 1 in active:\n            continue\n        length = 1\n        while day + length in active:\n            length += 1\n        best = max(best, length)\n    return best\n"
+  "solution": "def longest_streak(days):\n    active = set(days)\n    best = 0\n    for day in active:\n        if day - 1 in active:\n            continue\n        length = 1\n        while day + length in active:\n            length += 1\n        best = max(best, length)\n    return best\n",
+  "java": {
+    "methodName": "longestStreak",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int longestStreak(int[] days) {\n        // Your code here\n        return 0;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int longestStreak(int[] days) {\n        Set<Integer> active = new HashSet<>();\n        for (int day : days) active.add(day);\n        int best = 0;\n        for (int day : active) {\n            if (active.contains(day - 1)) continue;\n            int length = 1;\n            while (active.contains(day + length)) length++;\n            best = Math.max(best, length);\n        }\n        return best;\n    }\n}\n",
+    "hints": [
+      "Put every day in a `HashSet`.",
+      "A day starts a streak only if `day - 1` is not in the set. Count forward only from those starts."
+    ]
+  }
 }

@@ -56,5 +56,13 @@
     "Build the result as a list of characters and treat it as a stack.",
     "`''.join(chars)` turns the list back into a string at the end."
   ],
-  "solution": "def replay(keys):\n    chars = []\n    for key in keys:\n        if key == \"<\":\n            if chars:\n                chars.pop()\n        else:\n            chars.append(key)\n    return \"\".join(chars)\n"
+  "solution": "def replay(keys):\n    chars = []\n    for key in keys:\n        if key == \"<\":\n            if chars:\n                chars.pop()\n        else:\n            chars.append(key)\n    return \"\".join(chars)\n",
+  "java": {
+    "methodName": "replay",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static String replay(String keys) {\n        // Your code here\n        return \"\";\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static String replay(String keys) {\n        StringBuilder screen = new StringBuilder();\n        for (char key : keys.toCharArray()) {\n            if (key == '<') {\n                if (screen.length() > 0) screen.deleteCharAt(screen.length() - 1);\n            } else {\n                screen.append(key);\n            }\n        }\n        return screen.toString();\n    }\n}\n",
+    "hints": [
+      "A `StringBuilder` works as a stack of characters: `append` pushes and `deleteCharAt(length() - 1)` pops."
+    ]
+  }
 }

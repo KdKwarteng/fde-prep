@@ -92,5 +92,14 @@
     "Compare each value with the last value you kept.",
     "`result[-1]` is the last item in a list. Check that `result` is not empty first."
   ],
-  "solution": "def dedupe_sorted(ids):\n    result = []\n    for value in ids:\n        if not result or result[-1] != value:\n            result.append(value)\n    return result\n"
+  "solution": "def dedupe_sorted(ids):\n    result = []\n    for value in ids:\n        if not result or result[-1] != value:\n            result.append(value)\n    return result\n",
+  "java": {
+    "methodName": "dedupeSorted",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static List<Integer> dedupeSorted(int[] ids) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static List<Integer> dedupeSorted(int[] ids) {\n        List<Integer> result = new ArrayList<>();\n        for (int value : ids) {\n            if (result.isEmpty() || result.get(result.size() - 1) != value) result.add(value);\n        }\n        return result;\n    }\n}\n",
+    "hints": [
+      "Compare each value with the last one you kept.",
+      "Careful: comparing two `Integer` objects with `!=` compares references. Here one side is an `int`, so it unboxes and works."
+    ]
+  }
 }

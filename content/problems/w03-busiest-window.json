@@ -94,5 +94,14 @@
     "Compute the sum of the first `k` values once.",
     "To slide the window one step, add the value entering on the right and subtract the value leaving on the left."
   ],
-  "solution": "def busiest_window(requests, k):\n    if k < 1 or len(requests) < k:\n        return 0\n    window = sum(requests[:k])\n    best = window\n    for i in range(k, len(requests)):\n        window += requests[i] - requests[i - k]\n        best = max(best, window)\n    return best\n"
+  "solution": "def busiest_window(requests, k):\n    if k < 1 or len(requests) < k:\n        return 0\n    window = sum(requests[:k])\n    best = window\n    for i in range(k, len(requests)):\n        window += requests[i] - requests[i - k]\n        best = max(best, window)\n    return best\n",
+  "java": {
+    "methodName": "busiestWindow",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int busiestWindow(int[] requests, int k) {\n        // Your code here\n        return 0;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int busiestWindow(int[] requests, int k) {\n        if (k < 1 || requests.length < k) return 0;\n        int window = 0;\n        for (int i = 0; i < k; i++) window += requests[i];\n        int best = window;\n        for (int i = k; i < requests.length; i++) {\n            window += requests[i] - requests[i - k];\n            best = Math.max(best, window);\n        }\n        return best;\n    }\n}\n",
+    "hints": [
+      "Sum the first `k` values once.",
+      "To slide, add the value entering on the right and subtract the one leaving on the left."
+    ]
+  }
 }

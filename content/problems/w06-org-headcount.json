@@ -110,5 +110,14 @@
     "Write a helper that returns one person's count and, as it goes, records that count in a shared dictionary.",
     "Each person is visited exactly once, so this is O(n) even for a deep org."
   ],
-  "solution": "def headcounts(person):\n    counts = {}\n\n    def visit(node):\n        total = 1 + sum(visit(report) for report in node[\"reports\"])\n        counts[node[\"name\"]] = total\n        return total\n\n    visit(person)\n    return counts\n"
+  "solution": "def headcounts(person):\n    counts = {}\n\n    def visit(node):\n        total = 1 + sum(visit(report) for report in node[\"reports\"])\n        counts[node[\"name\"]] = total\n        return total\n\n    visit(person)\n    return counts\n",
+  "java": {
+    "methodName": "headcounts",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static class Employee {\n        String name;\n        List<Employee> reports;\n    }\n\n    static Map<String, Integer> headcounts(Employee person) {\n        // Your code here\n        return new HashMap<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static class Employee {\n        String name;\n        List<Employee> reports;\n    }\n\n    static Map<String, Integer> headcounts(Employee person) {\n        Map<String, Integer> counts = new HashMap<>();\n        visit(person, counts);\n        return counts;\n    }\n\n    static int visit(Employee node, Map<String, Integer> counts) {\n        int total = 1;\n        for (Employee report : node.reports) total += visit(report, counts);\n        counts.put(node.name, total);\n        return total;\n    }\n}\n",
+    "hints": [
+      "A person's headcount is 1 plus their direct reports' headcounts.",
+      "A recursive helper returns one person's count and records it in a shared map."
+    ]
+  }
 }

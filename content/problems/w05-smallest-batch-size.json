@@ -102,5 +102,14 @@
     "The capacity must be at least the largest job, and never needs to exceed the sum of all jobs. That is your search range.",
     "Write a helper that, for a given capacity, counts how many days a greedy fill takes. If it fits in `days`, try smaller. Otherwise go larger."
   ],
-  "solution": "def smallest_batch(jobs, days):\n    def days_needed(capacity):\n        used, load = 1, 0\n        for job in jobs:\n            if load + job > capacity:\n                used += 1\n                load = 0\n            load += job\n        return used\n\n    low, high = max(jobs), sum(jobs)\n    while low < high:\n        mid = (low + high) // 2\n        if days_needed(mid) <= days:\n            high = mid\n        else:\n            low = mid + 1\n    return low\n"
+  "solution": "def smallest_batch(jobs, days):\n    def days_needed(capacity):\n        used, load = 1, 0\n        for job in jobs:\n            if load + job > capacity:\n                used += 1\n                load = 0\n            load += job\n        return used\n\n    low, high = max(jobs), sum(jobs)\n    while low < high:\n        mid = (low + high) // 2\n        if days_needed(mid) <= days:\n            high = mid\n        else:\n            low = mid + 1\n    return low\n",
+  "java": {
+    "methodName": "smallestBatch",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int smallestBatch(int[] jobs, int days) {\n        // Your code here\n        return 0;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int smallestBatch(int[] jobs, int days) {\n        int low = 0, high = 0;\n        for (int job : jobs) {\n            low = Math.max(low, job);\n            high += job;\n        }\n        while (low < high) {\n            int mid = (low + high) >>> 1;\n            if (daysNeeded(jobs, mid) <= days) high = mid;\n            else low = mid + 1;\n        }\n        return low;\n    }\n\n    static int daysNeeded(int[] jobs, int capacity) {\n        int used = 1, load = 0;\n        for (int job : jobs) {\n            if (load + job > capacity) {\n                used++;\n                load = 0;\n            }\n            load += job;\n        }\n        return used;\n    }\n}\n",
+    "hints": [
+      "Binary search over capacities, from the largest job up to the sum of all jobs.",
+      "A helper method counts how many days a greedy fill takes for a given capacity."
+    ]
+  }
 }

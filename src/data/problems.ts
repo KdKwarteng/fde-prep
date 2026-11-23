@@ -3,6 +3,16 @@ import generated from "./problems.generated.json";
 
 export type TestCase = { args: unknown[]; expected: unknown };
 
+export type Language = "python" | "java";
+
+/** The Java version of a problem. Tests are shared with Python. */
+export type JavaVersion = {
+  methodName: string;
+  starterCode: string;
+  solution: string;
+  hints: string[];
+};
+
 export type Problem = {
   id: string;
   week: number;
@@ -17,6 +27,7 @@ export type Problem = {
   hints: string[];
   javaTip?: string;
   solution: string;
+  java?: JavaVersion;
 };
 
 export const problems = generated as Problem[];

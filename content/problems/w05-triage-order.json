@@ -124,5 +124,14 @@
     "Map each priority name to a number so it can be compared.",
     "`sorted(tickets, key=...)` accepts a function that returns a tuple. Tuples compare element by element."
   ],
-  "solution": "RANK = {\"urgent\": 0, \"high\": 1, \"normal\": 2, \"low\": 3}\n\ndef triage_order(tickets):\n    ordered = sorted(tickets, key=lambda t: (RANK[t[\"priority\"]], t[\"opened\"], t[\"id\"]))\n    return [ticket[\"id\"] for ticket in ordered]\n"
+  "solution": "RANK = {\"urgent\": 0, \"high\": 1, \"normal\": 2, \"low\": 3}\n\ndef triage_order(tickets):\n    ordered = sorted(tickets, key=lambda t: (RANK[t[\"priority\"]], t[\"opened\"], t[\"id\"]))\n    return [ticket[\"id\"] for ticket in ordered]\n",
+  "java": {
+    "methodName": "triageOrder",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static class Ticket {\n        String id;\n        String priority;\n        long opened;\n    }\n\n    static List<String> triageOrder(List<Ticket> tickets) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static class Ticket {\n        String id;\n        String priority;\n        long opened;\n    }\n\n    static final List<String> RANK = List.of(\"urgent\", \"high\", \"normal\", \"low\");\n\n    static List<String> triageOrder(List<Ticket> tickets) {\n        List<Ticket> ordered = new ArrayList<>(tickets);\n        ordered.sort(Comparator.<Ticket>comparingInt(t -> RANK.indexOf(t.priority))\n                .thenComparingLong(t -> t.opened)\n                .thenComparing(t -> t.id));\n        List<String> ids = new ArrayList<>();\n        for (Ticket t : ordered) ids.add(t.id);\n        return ids;\n    }\n}\n",
+    "hints": [
+      "Map each priority name to a number, for example its index in a fixed list.",
+      "Chain `Comparator.comparingInt(...).thenComparingLong(...).thenComparing(...)`."
+    ]
+  }
 }

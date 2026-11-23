@@ -102,5 +102,14 @@
     "For each item: if the value is a dict, recurse with the longer prefix. Otherwise store it under the full key.",
     "`isinstance(value, dict)` is the check you need."
   ],
-  "solution": "def flatten(config, prefix=\"\"):\n    flat = {}\n    for key, value in config.items():\n        full_key = f\"{prefix}.{key}\" if prefix else key\n        if isinstance(value, dict):\n            flat.update(flatten(value, full_key))\n        else:\n            flat[full_key] = value\n    return flat\n"
+  "solution": "def flatten(config, prefix=\"\"):\n    flat = {}\n    for key, value in config.items():\n        full_key = f\"{prefix}.{key}\" if prefix else key\n        if isinstance(value, dict):\n            flat.update(flatten(value, full_key))\n        else:\n            flat[full_key] = value\n    return flat\n",
+  "java": {
+    "methodName": "flatten",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static Map<String, Object> flatten(Map<String, Object> config) {\n        // Your code here\n        return new HashMap<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static Map<String, Object> flatten(Map<String, Object> config) {\n        Map<String, Object> flat = new LinkedHashMap<>();\n        flattenInto(config, \"\", flat);\n        return flat;\n    }\n\n    @SuppressWarnings(\"unchecked\")\n    static void flattenInto(Map<String, Object> config, String prefix, Map<String, Object> flat) {\n        for (Map.Entry<String, Object> entry : config.entrySet()) {\n            String key = prefix.isEmpty() ? entry.getKey() : prefix + \".\" + entry.getKey();\n            if (entry.getValue() instanceof Map) {\n                flattenInto((Map<String, Object>) entry.getValue(), key, flat);\n            } else {\n                flat.put(key, entry.getValue());\n            }\n        }\n    }\n}\n",
+    "hints": [
+      "Write a helper that takes the map, the key prefix so far, and the output map.",
+      "Nested objects arrive as `Map<String, Object>`, so check `value instanceof Map` and cast."
+    ]
+  }
 }

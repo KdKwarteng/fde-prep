@@ -63,5 +63,14 @@
     "Push each opening bracket. On a closing bracket, the top of the stack must be its partner.",
     "A dict from closing bracket to opening bracket keeps the matching logic to one line. Do not forget the stack must be empty at the end."
   ],
-  "solution": "def is_balanced(text):\n    pairs = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}\n    stack = []\n    for ch in text:\n        if ch in \"([{\":\n            stack.append(ch)\n        elif ch in pairs:\n            if not stack or stack.pop() != pairs[ch]:\n                return False\n    return not stack\n"
+  "solution": "def is_balanced(text):\n    pairs = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}\n    stack = []\n    for ch in text:\n        if ch in \"([{\":\n            stack.append(ch)\n        elif ch in pairs:\n            if not stack or stack.pop() != pairs[ch]:\n                return False\n    return not stack\n",
+  "java": {
+    "methodName": "isBalanced",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static boolean isBalanced(String text) {\n        // Your code here\n        return false;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static boolean isBalanced(String text) {\n        Deque<Character> stack = new ArrayDeque<>();\n        for (char ch : text.toCharArray()) {\n            if (ch == '(' || ch == '[' || ch == '{') {\n                stack.push(ch);\n            } else if (ch == ')' || ch == ']' || ch == '}') {\n                char open = ch == ')' ? '(' : ch == ']' ? '[' : '{';\n                if (stack.isEmpty() || stack.pop() != open) return false;\n            }\n        }\n        return stack.isEmpty();\n    }\n}\n",
+    "hints": [
+      "Use `ArrayDeque` as a stack (`push`, `pop`). The old `Stack` class still works but is slower and discouraged.",
+      "On a closing bracket, the top of the stack must be its partner. The stack must be empty at the end."
+    ]
+  }
 }

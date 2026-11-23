@@ -72,5 +72,14 @@
     "Track what you have already emitted in a `set` so the duplicate check is O(1)."
   ],
   "javaTip": "There is no StringBuilder dance here. `' '.join(w.capitalize() for w in s.split())` does the split, transform, and join in one expression.",
-  "solution": "def clean_names(names):\n    seen = set()\n    result = []\n    for raw in names:\n        name = \" \".join(word.capitalize() for word in raw.split())\n        if name and name not in seen:\n            seen.add(name)\n            result.append(name)\n    return result\n"
+  "solution": "def clean_names(names):\n    seen = set()\n    result = []\n    for raw in names:\n        name = \" \".join(word.capitalize() for word in raw.split())\n        if name and name not in seen:\n            seen.add(name)\n            result.append(name)\n    return result\n",
+  "java": {
+    "methodName": "cleanNames",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static List<String> cleanNames(List<String> names) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static List<String> cleanNames(List<String> names) {\n        Set<String> seen = new LinkedHashSet<>();\n        for (String raw : names) {\n            StringBuilder sb = new StringBuilder();\n            for (String word : raw.trim().split(\"\\\\s+\")) {\n                if (word.isEmpty()) continue;\n                if (sb.length() > 0) sb.append(' ');\n                sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1).toLowerCase());\n            }\n            if (sb.length() > 0) seen.add(sb.toString());\n        }\n        return new ArrayList<>(seen);\n    }\n}\n",
+    "hints": [
+      "`raw.trim().split(\"\\\\s+\")` splits on runs of whitespace. Watch out: splitting an all-blank string gives `[\"\"]`.",
+      "A `LinkedHashSet` drops duplicates and keeps insertion order in one step."
+    ]
+  }
 }

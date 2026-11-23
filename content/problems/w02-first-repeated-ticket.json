@@ -63,5 +63,13 @@
     "Walk the list once and remember what you have seen.",
     "A `set` gives you O(1) membership checks, where a list would make this O(n\u00b2)."
   ],
-  "solution": "def first_repeat(ticket_ids):\n    seen = set()\n    for ticket in ticket_ids:\n        if ticket in seen:\n            return ticket\n        seen.add(ticket)\n    return None\n"
+  "solution": "def first_repeat(ticket_ids):\n    seen = set()\n    for ticket in ticket_ids:\n        if ticket in seen:\n            return ticket\n        seen.add(ticket)\n    return None\n",
+  "java": {
+    "methodName": "firstRepeat",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static String firstRepeat(List<String> ticketIds) {\n        // Your code here\n        return null;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static String firstRepeat(List<String> ticketIds) {\n        Set<String> seen = new HashSet<>();\n        for (String ticket : ticketIds) {\n            if (!seen.add(ticket)) return ticket;\n        }\n        return null;\n    }\n}\n",
+    "hints": [
+      "`Set.add` returns `false` when the item was already there, which is exactly the check you need."
+    ]
+  }
 }

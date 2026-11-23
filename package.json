@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "verify": "python3 scripts/verify_problems.py",
+    "verify": "python3 scripts/verify_problems.py && npm run verify:java",
+    "verify:java": "./scripts/build-java-harness.sh && java -cp public/java/harness.jar dev.fdeprep.VerifyCli content/problems",
     "predev": "npm run prepare:content",
     "prebuild": "npm run prepare:content",
     "prepare:content": "node scripts/copy-pyodide.mjs && node scripts/build-problem-index.mjs",
@@ -15,6 +16,7 @@
     "test": "node --experimental-strip-types --test src/lib/*.test.ts"
   },
   "dependencies": {
+    "@codemirror/lang-java": "^6.0.2",
     "@codemirror/lang-python": "^6.2.1",
     "@supabase/supabase-js": "^2.119.0",
     "@uiw/react-codemirror": "^4.25.12",

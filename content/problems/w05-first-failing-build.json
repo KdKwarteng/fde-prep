@@ -81,5 +81,14 @@
     "If the middle build failed, the first failure is at the middle or to its left. If it passed, the first failure is strictly to the right.",
     "Use `low < high` with `high = mid` and `low = mid + 1`, then check the build where they meet."
   ],
-  "solution": "def first_failing(failed):\n    low, high = 0, len(failed)\n    while low < high:\n        mid = (low + high) // 2\n        if failed[mid]:\n            high = mid\n        else:\n            low = mid + 1\n    return low if low < len(failed) else -1\n"
+  "solution": "def first_failing(failed):\n    low, high = 0, len(failed)\n    while low < high:\n        mid = (low + high) // 2\n        if failed[mid]:\n            high = mid\n        else:\n            low = mid + 1\n    return low if low < len(failed) else -1\n",
+  "java": {
+    "methodName": "firstFailing",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int firstFailing(boolean[] failed) {\n        // Your code here\n        return 0;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int firstFailing(boolean[] failed) {\n        int low = 0, high = failed.length;\n        while (low < high) {\n            int mid = (low + high) >>> 1;\n            if (failed[mid]) high = mid;\n            else low = mid + 1;\n        }\n        return low < failed.length ? low : -1;\n    }\n}\n",
+    "hints": [
+      "This is binary search for a boundary, not a value.",
+      "Use `low < high` with `high = mid` when the middle failed, and `low = mid + 1` when it passed."
+    ]
+  }
 }

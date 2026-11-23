@@ -101,5 +101,15 @@
     "Order matters for `-` and `/`: the first value you pop is the right-hand operand.",
     "Python's `//` rounds down, not toward zero. `int(a / b)` truncates toward zero."
   ],
-  "solution": "def evaluate(tokens):\n    stack = []\n    for token in tokens:\n        if token in (\"+\", \"-\", \"*\", \"/\"):\n            right = stack.pop()\n            left = stack.pop()\n            if token == \"+\":\n                stack.append(left + right)\n            elif token == \"-\":\n                stack.append(left - right)\n            elif token == \"*\":\n                stack.append(left * right)\n            else:\n                stack.append(int(left / right))\n        else:\n            stack.append(int(token))\n    return stack[0]\n"
+  "solution": "def evaluate(tokens):\n    stack = []\n    for token in tokens:\n        if token in (\"+\", \"-\", \"*\", \"/\"):\n            right = stack.pop()\n            left = stack.pop()\n            if token == \"+\":\n                stack.append(left + right)\n            elif token == \"-\":\n                stack.append(left - right)\n            elif token == \"*\":\n                stack.append(left * right)\n            else:\n                stack.append(int(left / right))\n        else:\n            stack.append(int(token))\n    return stack[0]\n",
+  "java": {
+    "methodName": "evaluate",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int evaluate(String[] tokens) {\n        // Your code here\n        return 0;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int evaluate(String[] tokens) {\n        Deque<Integer> stack = new ArrayDeque<>();\n        for (String token : tokens) {\n            switch (token) {\n                case \"+\": case \"-\": case \"*\": case \"/\": {\n                    int right = stack.pop(), left = stack.pop();\n                    stack.push(token.equals(\"+\") ? left + right\n                            : token.equals(\"-\") ? left - right\n                            : token.equals(\"*\") ? left * right\n                            : left / right);\n                    break;\n                }\n                default:\n                    stack.push(Integer.parseInt(token));\n            }\n        }\n        return stack.pop();\n    }\n}\n",
+    "hints": [
+      "Push numbers. On an operator, pop two values, apply it, and push the result.",
+      "The first value you pop is the right-hand operand.",
+      "Java's `/` on ints already truncates toward zero, unlike Python's `//`."
+    ]
+  }
 }

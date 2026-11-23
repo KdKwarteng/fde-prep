@@ -1,11 +1,13 @@
 "use client";
 
+import { java } from "@codemirror/lang-java";
 import { python } from "@codemirror/lang-python";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Markdown from "react-markdown";
-import type { Problem } from "@/data/problems";
+import type { Language, Problem } from "@/data/problems";
+import { runJavaTests, warmUpJava } from "@/lib/java-runner";
 import { clearDraft, loadDraft, progressActions, saveDraft, useProgress } from "@/lib/progress";
 import { runTests, warmUpPython, type RunReport, type RunStatus } from "@/lib/runner";
 import { DifficultyBadge } from "./DifficultyBadge";
@@ -35,7 +37,15 @@ function formatCall(functionName: string, args: unknown[]): string {
   return `${functionName}(${args.map(show).join(", ")})`;
 }
 
-function Results({ problem, report }: { problem: Problem; report: RunReport }) {
+function Results({
+  problem,
+  callName,
+  report,
+}: {
+  problem: Problem;
+  callName: string;
+  report: RunReport;
+}) {
   if (report.error) {
     return (
       <pre className="whitespace-pre-wrap rounded-lg border border-danger p-3 font-mono text-sm text-danger">
@@ -69,7 +79,7 @@ function Results({ problem, report }: { problem: Problem; report: RunReport }) {
             </summary>
             <dl className="grid grid-cols-[5rem_1fr] gap-x-3 gap-y-1 border-t border-border px-3 py-2 font-mono text-xs">
               <dt className="text-muted">Call</dt>
-              <dd className="break-all">{formatCall(problem.functionName, test.args)}</dd>
+              <dd className="break-all">{formatCall(callName, test.args)}</dd>
               <dt className="text-muted">Expected</dt>
               <dd className="break-all">{show(test.expected)}</dd>
               {result.error ? (
@@ -101,29 +111,94 @@ function Results({ problem, report }: { problem: Problem; report: RunReport }) {
 
 type Props = { problem: Problem; position: string; nextId: string | null };
 
-export function Workspace({ problem, position, nextId }: Props) {
+/** What the editor needs for one language. Tests are shared by both. */
+type Version = {
+  language: Language;
+  callName: string;
+  starterCode: string;
+  solution: string;
+  hints: string[];
+};
+
+function versionFor(problem: Problem, language: Language): Version {
+  if (language === "java" && problem.java) {
+    return { language, callName: problem.java.methodName, ...problem.java };
+  }
+  return {
+    language: "python",
+    callName: problem.functionName,
+    starterCode: problem.starterCode,
+    solution: problem.solution,
+    hints: problem.hints,
+  };
+}
+
+export function Workspace(props: Props) {
+  const progress = useProgress();
+  const language: Language = props.problem.java ? progress.language : "python";
+  // Remount when the language changes so the editor, hints, and results start fresh.
+  return <LanguageWorkspace key={language} {...props} version={versionFor(props.problem, language)} />;
+}
+
+const LANGUAGES: { id: Language; label: string }[] = [
+  { id: "python", label: "Python" },
+  { id: "java", label: "Java" },
+];
+
+function LanguagePicker({ current, javaAvailable }: { current: Language; javaAvailable: boolean }) {
+  return (
+    <div role="radiogroup" aria-label="Language" className="flex rounded-md border border-border p-0.5 text-sm">
+      {LANGUAGES.map(({ id, label }) => {
+        const disabled = id === "java" && !javaAvailable;
+        return (
+          <button
+            key={id}
+            type="button"
+            role="radio"
+            aria-checked={current === id}
+            disabled={disabled}
+            title={disabled ? "This problem has no Java version yet" : undefined}
+            onClick={() => progressActions.setLanguage(id)}
+            className={`rounded px-3 py-1 ${
+              current === id ? "bg-accent text-background" : "text-muted hover:text-foreground"
+            } disabled:opacity-40`}
+          >
+            {label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function LanguageWorkspace({ problem, position, nextId, version }: Props & { version: Version }) {
   const progress = useProgress();
   const solved = Boolean(progress.solved[problem.id]);
   const dark = usePrefersDark();
-  const [code, setCode] = useState(() => loadDraft(problem.id) ?? problem.starterCode);
+  const { language } = version;
+  const [code, setCode] = useState(() => loadDraft(problem.id, language) ?? version.starterCode);
   const [status, setStatus] = useState<RunStatus | null>(null);
   const [report, setReport] = useState<RunReport | null>(null);
   const [hintsShown, setHintsShown] = useState(0);
   const [solutionShown, setSolutionShown] = useState(false);
-  const extensions = useMemo(() => [python()], []);
+  const extensions = useMemo(() => [language === "java" ? java() : python()], [language]);
 
   useEffect(() => {
-    warmUpPython();
-  }, []);
+    if (language === "java") warmUpJava();
+    else warmUpPython();
+  }, [language]);
 
   const onChange = (value: string) => {
     setCode(value);
-    saveDraft(problem.id, value);
+    saveDraft(problem.id, language, value);
   };
 
   const run = async () => {
     if (status) return;
-    const result = await runTests(code, problem.functionName, problem.tests, setStatus);
+    const result =
+      language === "java"
+        ? await runJavaTests(code, version.callName, problem.tests, setStatus)
+        : await runTests(code, version.callName, problem.tests, setStatus);
     setStatus(null);
     setReport(result);
     if (!result.error && result.results.length > 0 && result.results.every((r) => r.passed)) {
@@ -132,8 +207,8 @@ export function Workspace({ problem, position, nextId }: Props) {
   };
 
   const reset = () => {
-    clearDraft(problem.id);
-    setCode(problem.starterCode);
+    clearDraft(problem.id, language);
+    setCode(version.starterCode);
     setReport(null);
   };
 
@@ -160,7 +235,21 @@ export function Workspace({ problem, position, nextId }: Props) {
           <Markdown>{problem.description}</Markdown>
         </div>
 
-        {problem.javaTip && (
+        {language === "java" && (
+          <aside className="rounded-lg border border-border bg-surface p-3 text-sm">
+            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted">
+              Solving in Java
+            </p>
+            <p>
+              Write <code>{version.callName}</code> inside <code>class Solution</code>. The
+              description uses the Python name <code>{problem.functionName}</code>, but the inputs
+              and expected outputs are the same. JSON lists arrive as arrays or <code>List</code>s,
+              and JSON objects as <code>Map</code>s or the small classes in the starter code.
+            </p>
+          </aside>
+        )}
+
+        {language === "python" && problem.javaTip && (
           <aside className="rounded-lg border border-border bg-surface p-3 text-sm">
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted">
               Coming from Java
@@ -172,7 +261,7 @@ export function Workspace({ problem, position, nextId }: Props) {
         )}
 
         <div className="flex flex-col gap-2">
-          {problem.hints.slice(0, hintsShown).map((hint, index) => (
+          {version.hints.slice(0, hintsShown).map((hint, index) => (
             <div key={index} className="rounded-lg border border-border bg-surface p-3 text-sm">
               <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted">
                 Hint {index + 1}
@@ -183,17 +272,17 @@ export function Workspace({ problem, position, nextId }: Props) {
             </div>
           ))}
           <div className="flex flex-wrap gap-3 text-sm">
-            {hintsShown < problem.hints.length && (
+            {hintsShown < version.hints.length && (
               <button
                 type="button"
                 onClick={() => setHintsShown(hintsShown + 1)}
                 className="rounded-md border border-border px-3 py-1.5 hover:border-accent"
               >
                 {hintsShown === 0 ? "Show a hint" : "Show another hint"} ({hintsShown} of{" "}
-                {problem.hints.length})
+                {version.hints.length})
               </button>
             )}
-            {(solved || hintsShown === problem.hints.length) && !solutionShown && (
+            {(solved || hintsShown === version.hints.length) && !solutionShown && (
               <button
                 type="button"
                 onClick={() => setSolutionShown(true)}
@@ -209,7 +298,7 @@ export function Workspace({ problem, position, nextId }: Props) {
                 Reference solution
               </p>
               <pre>
-                <code>{problem.solution}</code>
+                <code>{version.solution}</code>
               </pre>
             </div>
           )}
@@ -225,6 +314,17 @@ export function Workspace({ problem, position, nextId }: Props) {
           }
         }}
       >
+        <div className="flex flex-wrap items-center gap-3">
+          <LanguagePicker current={language} javaAvailable={Boolean(problem.java)} />
+          {language === "java" && (
+            <span className="text-xs text-muted">
+              Built with{" "}
+              <a href="https://cheerpj.com" target="_blank" rel="noreferrer" className="underline">
+                CheerpJ
+              </a>
+            </span>
+          )}
+        </div>
         <div className="h-80 overflow-hidden rounded-lg border border-border lg:h-[26rem]">
           <CodeMirror
             value={code}
@@ -234,7 +334,7 @@ export function Workspace({ problem, position, nextId }: Props) {
             height="100%"
             style={{ height: "100%", fontSize: 14 }}
             basicSetup={{ tabSize: 4 }}
-            aria-label="Python code editor"
+            aria-label={`${language === "java" ? "Java" : "Python"} code editor`}
           />
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -246,6 +346,8 @@ export function Workspace({ problem, position, nextId }: Props) {
           >
             {status === "loading-python"
               ? "Loading Python…"
+              : status === "loading-java"
+                ? "Loading Java…"
               : status === "running"
                 ? "Running…"
                 : "Run tests"}
@@ -257,11 +359,12 @@ export function Workspace({ problem, position, nextId }: Props) {
         </div>
         <div aria-live="polite" className="flex flex-col gap-3">
           {report ? (
-            <Results problem={problem} report={report} />
+            <Results problem={problem} callName={version.callName} report={report} />
           ) : (
             <p className="text-sm text-muted">
-              Run the tests to see results. Python runs in your browser, so the first run takes a
-              few seconds to load.
+              {language === "java"
+                ? "Run the tests to see results. Java runs in your browser, so the first run downloads a Java runtime and can take 10 to 30 seconds."
+                : "Run the tests to see results. Python runs in your browser, so the first run takes a few seconds to load."}
             </p>
           )}
           {solved && report && !report.error && (

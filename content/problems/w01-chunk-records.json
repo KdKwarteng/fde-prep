@@ -114,5 +114,14 @@
     "A slice like `items[i:i + size]` never raises, even when it runs past the end."
   ],
   "javaTip": "Slices replace `subList` and are safe past the end of the list, so there is no `Math.min(i + size, n)` needed.",
-  "solution": "def chunk(items, size):\n    return [items[i:i + size] for i in range(0, len(items), size)]\n"
+  "solution": "def chunk(items, size):\n    return [items[i:i + size] for i in range(0, len(items), size)]\n",
+  "java": {
+    "methodName": "chunk",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static <T> List<List<T>> chunk(List<T> items, int size) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static <T> List<List<T>> chunk(List<T> items, int size) {\n        List<List<T>> batches = new ArrayList<>();\n        for (int i = 0; i < items.size(); i += size) {\n            batches.add(new ArrayList<>(items.subList(i, Math.min(i + size, items.size()))));\n        }\n        return batches;\n    }\n}\n",
+    "hints": [
+      "Step the start index by `size`.",
+      "`subList(from, to)` throws if `to` runs past the end, so cap it with `Math.min`."
+    ]
+  }
 }

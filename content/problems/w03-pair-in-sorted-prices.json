@@ -102,5 +102,14 @@
     "Start with one index at the smallest price and one at the largest.",
     "If the sum is too small, the only way to grow it is to move the left index right. If it is too big, move the right index left."
   ],
-  "solution": "def sorted_pair(prices, budget):\n    left, right = 0, len(prices) - 1\n    while left < right:\n        total = prices[left] + prices[right]\n        if total == budget:\n            return [left, right]\n        if total < budget:\n            left += 1\n        else:\n            right -= 1\n    return []\n"
+  "solution": "def sorted_pair(prices, budget):\n    left, right = 0, len(prices) - 1\n    while left < right:\n        total = prices[left] + prices[right]\n        if total == budget:\n            return [left, right]\n        if total < budget:\n            left += 1\n        else:\n            right -= 1\n    return []\n",
+  "java": {
+    "methodName": "sortedPair",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int[] sortedPair(int[] prices, int budget) {\n        // Your code here\n        return new int[0];\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int[] sortedPair(int[] prices, int budget) {\n        int left = 0, right = prices.length - 1;\n        while (left < right) {\n            int total = prices[left] + prices[right];\n            if (total == budget) return new int[] {left, right};\n            if (total < budget) left++;\n            else right--;\n        }\n        return new int[0];\n    }\n}\n",
+    "hints": [
+      "Start with one index at the smallest price and one at the largest.",
+      "Too small: move the left index right. Too big: move the right index left."
+    ]
+  }
 }

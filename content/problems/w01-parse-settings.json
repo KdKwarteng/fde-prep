@@ -58,5 +58,14 @@
     "Check for booleans with `value.lower() in ('true', 'false')`."
   ],
   "javaTip": "Python dicts can hold mixed value types without generics or casting, which is why config parsing like this is so short.",
-  "solution": "def parse_settings(text):\n    settings = {}\n    for segment in text.split(\";\"):\n        if \"=\" not in segment:\n            continue\n        key, value = segment.split(\"=\", 1)\n        key, value = key.strip(), value.strip()\n        if value.isdigit():\n            value = int(value)\n        elif value.lower() in (\"true\", \"false\"):\n            value = value.lower() == \"true\"\n        settings[key] = value\n    return settings\n"
+  "solution": "def parse_settings(text):\n    settings = {}\n    for segment in text.split(\";\"):\n        if \"=\" not in segment:\n            continue\n        key, value = segment.split(\"=\", 1)\n        key, value = key.strip(), value.strip()\n        if value.isdigit():\n            value = int(value)\n        elif value.lower() in (\"true\", \"false\"):\n            value = value.lower() == \"true\"\n        settings[key] = value\n    return settings\n",
+  "java": {
+    "methodName": "parseSettings",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static Map<String, Object> parseSettings(String text) {\n        // Your code here\n        return new HashMap<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static Map<String, Object> parseSettings(String text) {\n        Map<String, Object> settings = new LinkedHashMap<>();\n        for (String segment : text.split(\";\")) {\n            int eq = segment.indexOf('=');\n            if (eq < 0) continue;\n            String key = segment.substring(0, eq).trim();\n            String value = segment.substring(eq + 1).trim();\n            if (!value.isEmpty() && value.chars().allMatch(Character::isDigit)) {\n                settings.put(key, Integer.parseInt(value));\n            } else if (value.equalsIgnoreCase(\"true\") || value.equalsIgnoreCase(\"false\")) {\n                settings.put(key, Boolean.parseBoolean(value));\n            } else {\n                settings.put(key, value);\n            }\n        }\n        return settings;\n    }\n}\n",
+    "hints": [
+      "`indexOf('=')` finds the first `=`, so everything after it is the value even if it contains more `=`.",
+      "`value.chars().allMatch(Character::isDigit)` checks for digits only, but guard against the empty string."
+    ]
+  }
 }
