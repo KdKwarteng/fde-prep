@@ -43,17 +43,14 @@ function findGlobal<T>(name: string): T | undefined {
   }
 }
 
-function cheerpj(): CheerpJ | null {
-  const cheerpjInit = findGlobal<CheerpJ["cheerpjInit"]>("cheerpjInit");
-  const cheerpjRunLibrary = findGlobal<CheerpJ["cheerpjRunLibrary"]>("cheerpjRunLibrary");
-  return cheerpjInit && cheerpjRunLibrary ? { cheerpjInit, cheerpjRunLibrary } : null;
+// The loader defines only cheerpjInit. The other functions, such as
+// cheerpjRunLibrary, appear once cheerpjInit has finished.
+function cheerpjInit(): CheerpJ["cheerpjInit"] | undefined {
+  return findGlobal<CheerpJ["cheerpjInit"]>("cheerpjInit");
 }
 
-let harness: Promise<HarnessClass> | null = null;
-let broken = false;
-
 function loadScript(src: string): Promise<void> {
-  if (cheerpj()) return Promise.resolve();
+  if (cheerpjInit()) return Promise.resolve();
   // A tag left by an earlier failed attempt never fires again, so replace it.
   document.querySelector(`script[src="${src}"]`)?.remove();
   return new Promise((resolve, reject) => {
@@ -75,16 +72,16 @@ function loadScript(src: string): Promise<void> {
 
 async function start(): Promise<HarnessClass> {
   await loadScript(LOADER_URL);
-  const runtime = cheerpj();
-  if (!runtime) {
-    // Name what the loader did define, to make a report from the browser useful.
-    const seen = Object.keys(window).filter((key) => key.toLowerCase().includes("cheerpj"));
-    throw new Error(
-      `the Java runtime did not load (found: ${seen.length ? seen.join(", ") : "nothing named cheerpj"})`,
-    );
+  // cheerpjInit may only run once per page, so keep its promise across retries.
+  if (!initialized) {
+    const init = cheerpjInit();
+    if (!init) throw new Error("the Java runtime did not load");
+    initialized = init({ version: 17, status: "none" });
   }
-  await runtime.cheerpjInit({ version: 17, status: "none" });
-  const library = await runtime.cheerpjRunLibrary(CLASSPATH);
+  await initialized;
+  const runLibrary = findGlobal<CheerpJ["cheerpjRunLibrary"]>("cheerpjRunLibrary");
+  if (!runLibrary) throw new Error("the Java runtime started without cheerpjRunLibrary");
+  const library = await runLibrary(CLASSPATH);
   return await library.dev.fdeprep.Harness;
 }
 
