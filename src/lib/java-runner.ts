@@ -43,6 +43,10 @@ function findGlobal<T>(name: string): T | undefined {
   }
 }
 
+let harness: Promise<HarnessClass> | null = null;
+let initialized: Promise<void> | null = null;
+let broken = false;
+
 // The loader defines only cheerpjInit. The other functions, such as
 // cheerpjRunLibrary, appear once cheerpjInit has finished.
 function cheerpjInit(): CheerpJ["cheerpjInit"] | undefined {
