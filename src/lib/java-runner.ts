@@ -22,18 +22,38 @@ type HarnessClass = {
 
 type CheerpJLibrary = { dev: { fdeprep: { Harness: Promise<HarnessClass> } } };
 
-declare global {
-  interface Window {
-    cheerpjInit?: (options?: Record<string, unknown>) => Promise<void>;
-    cheerpjRunLibrary?: (classpath: string) => Promise<CheerpJLibrary>;
+type CheerpJ = {
+  cheerpjInit: (options?: Record<string, unknown>) => Promise<void>;
+  cheerpjRunLibrary: (classpath: string) => Promise<CheerpJLibrary>;
+};
+
+/**
+ * Find a function the loader defined. A top-level `function` becomes a
+ * property of `window`, but a top-level `const` or `let` is global without
+ * being on `window`, so fall back to looking the name up as a bare identifier.
+ */
+function findGlobal<T>(name: string): T | undefined {
+  const onWindow = (window as unknown as Record<string, unknown>)[name];
+  if (typeof onWindow === "function") return onWindow as T;
+  try {
+    // The name is one of our own constants, never user input.
+    return new Function(`return typeof ${name} === "function" ? ${name} : undefined`)() as T | undefined;
+  } catch {
+    return undefined;
   }
+}
+
+function cheerpj(): CheerpJ | null {
+  const cheerpjInit = findGlobal<CheerpJ["cheerpjInit"]>("cheerpjInit");
+  const cheerpjRunLibrary = findGlobal<CheerpJ["cheerpjRunLibrary"]>("cheerpjRunLibrary");
+  return cheerpjInit && cheerpjRunLibrary ? { cheerpjInit, cheerpjRunLibrary } : null;
 }
 
 let harness: Promise<HarnessClass> | null = null;
 let broken = false;
 
 function loadScript(src: string): Promise<void> {
-  if (window.cheerpjInit) return Promise.resolve();
+  if (cheerpj()) return Promise.resolve();
   // A tag left by an earlier failed attempt never fires again, so replace it.
   document.querySelector(`script[src="${src}"]`)?.remove();
   return new Promise((resolve, reject) => {
@@ -55,11 +75,16 @@ function loadScript(src: string): Promise<void> {
 
 async function start(): Promise<HarnessClass> {
   await loadScript(LOADER_URL);
-  if (!window.cheerpjInit || !window.cheerpjRunLibrary) {
-    throw new Error("the Java runtime did not load");
+  const runtime = cheerpj();
+  if (!runtime) {
+    // Name what the loader did define, to make a report from the browser useful.
+    const seen = Object.keys(window).filter((key) => key.toLowerCase().includes("cheerpj"));
+    throw new Error(
+      `the Java runtime did not load (found: ${seen.length ? seen.join(", ") : "nothing named cheerpj"})`,
+    );
   }
-  await window.cheerpjInit({ version: 17, status: "none" });
-  const library = await window.cheerpjRunLibrary(CLASSPATH);
+  await runtime.cheerpjInit({ version: 17, status: "none" });
+  const library = await runtime.cheerpjRunLibrary(CLASSPATH);
   return await library.dev.fdeprep.Harness;
 }
 
