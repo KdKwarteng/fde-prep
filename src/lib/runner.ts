@@ -16,7 +16,7 @@ export type RunReport = {
   results: TestResult[];
 };
 
-export type RunStatus = "loading-python" | "running";
+export type RunStatus = "loading-python" | "loading-java" | "running";
 
 const RUN_TIMEOUT_MS = 10_000;
 

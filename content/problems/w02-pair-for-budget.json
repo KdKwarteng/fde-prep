@@ -101,5 +101,14 @@
     "Keep a dict from price to the index where you saw it. Check for the partner before you store the current price.",
     "If the same price appears twice, keep the earliest index so `i` is as small as possible."
   ],
-  "solution": "def pair_for_budget(prices, budget):\n    seen = {}\n    for j, price in enumerate(prices):\n        need = budget - price\n        if need in seen:\n            return [seen[need], j]\n        seen.setdefault(price, j)\n    return []\n"
+  "solution": "def pair_for_budget(prices, budget):\n    seen = {}\n    for j, price in enumerate(prices):\n        need = budget - price\n        if need in seen:\n            return [seen[need], j]\n        seen.setdefault(price, j)\n    return []\n",
+  "java": {
+    "methodName": "pairForBudget",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int[] pairForBudget(int[] prices, int budget) {\n        // Your code here\n        return new int[0];\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int[] pairForBudget(int[] prices, int budget) {\n        Map<Integer, Integer> seen = new HashMap<>();\n        for (int j = 0; j < prices.length; j++) {\n            Integer i = seen.get(budget - prices[j]);\n            if (i != null) return new int[] {i, j};\n            seen.putIfAbsent(prices[j], j);\n        }\n        return new int[0];\n    }\n}\n",
+    "hints": [
+      "For each price, the partner you need is `budget - price`.",
+      "Keep a `HashMap` from price to the first index where you saw it. Check for the partner before storing the current price."
+    ]
+  }
 }

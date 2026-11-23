@@ -62,5 +62,14 @@
     "`collections.Counter` does the counting for you. Convert it with `dict(...)` before returning."
   ],
   "javaTip": "`dict.get(key, default)` replaces Java's `getOrDefault`, and `collections.Counter` replaces the whole counting loop.",
-  "solution": "from collections import Counter\n\ndef count_status_codes(lines):\n    counts = Counter()\n    for line in lines:\n        parts = line.split(\" \")\n        if len(parts) != 3:\n            continue\n        _method, _path, status = parts\n        counts[status] += 1\n    return dict(counts)\n"
+  "solution": "from collections import Counter\n\ndef count_status_codes(lines):\n    counts = Counter()\n    for line in lines:\n        parts = line.split(\" \")\n        if len(parts) != 3:\n            continue\n        _method, _path, status = parts\n        counts[status] += 1\n    return dict(counts)\n",
+  "java": {
+    "methodName": "countStatusCodes",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static Map<String, Integer> countStatusCodes(List<String> lines) {\n        // Your code here\n        return new HashMap<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static Map<String, Integer> countStatusCodes(List<String> lines) {\n        Map<String, Integer> counts = new HashMap<>();\n        for (String line : lines) {\n            String[] parts = line.split(\" \", -1);\n            if (parts.length != 3) continue;\n            counts.merge(parts[2], 1, Integer::sum);\n        }\n        return counts;\n    }\n}\n",
+    "hints": [
+      "`line.split(\" \", -1)` keeps empty trailing pieces, so malformed lines are not silently accepted.",
+      "`counts.merge(key, 1, Integer::sum)` adds one, starting from zero."
+    ]
+  }
 }

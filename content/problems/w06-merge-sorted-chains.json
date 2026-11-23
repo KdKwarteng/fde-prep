@@ -177,5 +177,14 @@
     "Keep a `tail` name pointing at the last node of the merged chain. Attach the smaller of the two front nodes and advance that chain.",
     "When one chain runs out, attach whatever is left of the other in one step."
   ],
-  "solution": "def merge_chains(a, b):\n    placeholder = {\"value\": None, \"next\": None}\n    tail = placeholder\n    while a is not None and b is not None:\n        if a[\"value\"] <= b[\"value\"]:\n            tail[\"next\"] = a\n            a = a[\"next\"]\n        else:\n            tail[\"next\"] = b\n            b = b[\"next\"]\n        tail = tail[\"next\"]\n    tail[\"next\"] = a if a is not None else b\n    return placeholder[\"next\"]\n"
+  "solution": "def merge_chains(a, b):\n    placeholder = {\"value\": None, \"next\": None}\n    tail = placeholder\n    while a is not None and b is not None:\n        if a[\"value\"] <= b[\"value\"]:\n            tail[\"next\"] = a\n            a = a[\"next\"]\n        else:\n            tail[\"next\"] = b\n            b = b[\"next\"]\n        tail = tail[\"next\"]\n    tail[\"next\"] = a if a is not None else b\n    return placeholder[\"next\"]\n",
+  "java": {
+    "methodName": "mergeChains",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static class ListNode {\n        int value;\n        ListNode next;\n    }\n\n    static ListNode mergeChains(ListNode a, ListNode b) {\n        // Your code here\n        return null;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static class ListNode {\n        int value;\n        ListNode next;\n    }\n\n    static ListNode mergeChains(ListNode a, ListNode b) {\n        ListNode placeholder = new ListNode();\n        ListNode tail = placeholder;\n        while (a != null && b != null) {\n            if (a.value <= b.value) {\n                tail.next = a;\n                a = a.next;\n            } else {\n                tail.next = b;\n                b = b.next;\n            }\n            tail = tail.next;\n        }\n        tail.next = a != null ? a : b;\n        return placeholder.next;\n    }\n}\n",
+    "hints": [
+      "A placeholder first node saves you from special-casing the head.",
+      "When one chain runs out, attach the rest of the other in one step."
+    ]
+  }
 }

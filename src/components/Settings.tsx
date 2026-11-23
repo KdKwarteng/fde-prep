@@ -19,6 +19,29 @@ export function Settings() {
       <AccountSettings />
 
       <section className="rounded-lg border border-border bg-surface p-5">
+        <h2 className="font-semibold">Language</h2>
+        <p className="mb-3 text-sm text-muted">
+          The language problems open in. You can also switch on any problem page. Your code is
+          saved separately for each language. Python is the main track because most FDE
+          interviews and day-to-day data work use it.
+        </p>
+        <div className="flex gap-4">
+          {(["python", "java"] as const).map((language) => (
+            <label key={language} className="flex cursor-pointer items-center gap-2">
+              <input
+                type="radio"
+                name="language"
+                checked={progress.language === language}
+                onChange={() => progressActions.setLanguage(language)}
+                className="h-4 w-4 accent-(--accent)"
+              />
+              {language === "python" ? "Python" : "Java"}
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-border bg-surface p-5">
         <h2 className="font-semibold">Start date</h2>
         <p className="mb-3 text-sm text-muted">
           Week 1 begins on this date and a new week unlocks every 7 days after it. Move it later

@@ -84,22 +84,22 @@
     {
       "args": [
         {
-          "value": "a",
+          "value": 10,
           "next": {
-            "value": "b",
+            "value": 20,
             "next": {
-              "value": "c",
+              "value": 30,
               "next": null
             }
           }
         }
       ],
       "expected": {
-        "value": "c",
+        "value": 30,
         "next": {
-          "value": "b",
+          "value": 20,
           "next": {
-            "value": "a",
+            "value": 10,
             "next": null
           }
         }
@@ -111,5 +111,14 @@
     "At each step, save `current[\"next\"]`, point `current[\"next\"]` at `previous`, then advance both.",
     "When `current` becomes `None`, `previous` is the new head."
   ],
-  "solution": "def reverse_chain(head):\n    previous = None\n    current = head\n    while current is not None:\n        following = current[\"next\"]\n        current[\"next\"] = previous\n        previous = current\n        current = following\n    return previous\n"
+  "solution": "def reverse_chain(head):\n    previous = None\n    current = head\n    while current is not None:\n        following = current[\"next\"]\n        current[\"next\"] = previous\n        previous = current\n        current = following\n    return previous\n",
+  "java": {
+    "methodName": "reverseChain",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static class ListNode {\n        int value;\n        ListNode next;\n    }\n\n    static ListNode reverseChain(ListNode head) {\n        // Your code here\n        return null;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static class ListNode {\n        int value;\n        ListNode next;\n    }\n\n    static ListNode reverseChain(ListNode head) {\n        ListNode previous = null, current = head;\n        while (current != null) {\n            ListNode following = current.next;\n            current.next = previous;\n            previous = current;\n            current = following;\n        }\n        return previous;\n    }\n}\n",
+    "hints": [
+      "Walk the chain with three references: previous, current, and next.",
+      "Save `current.next`, point it at `previous`, then advance both."
+    ]
+  }
 }

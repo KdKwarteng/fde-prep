@@ -63,5 +63,14 @@
     "Keep a stack of directory names. `..` pops if the stack is not empty.",
     "Join the stack with `/` and put one `/` in front."
   ],
-  "solution": "def resolve_path(path):\n    stack = []\n    for part in path.split(\"/\"):\n        if part in (\"\", \".\"):\n            continue\n        if part == \"..\":\n            if stack:\n                stack.pop()\n        else:\n            stack.append(part)\n    return \"/\" + \"/\".join(stack)\n"
+  "solution": "def resolve_path(path):\n    stack = []\n    for part in path.split(\"/\"):\n        if part in (\"\", \".\"):\n            continue\n        if part == \"..\":\n            if stack:\n                stack.pop()\n        else:\n            stack.append(part)\n    return \"/\" + \"/\".join(stack)\n",
+  "java": {
+    "methodName": "resolvePath",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static String resolvePath(String path) {\n        // Your code here\n        return \"\";\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static String resolvePath(String path) {\n        Deque<String> stack = new ArrayDeque<>();\n        for (String part : path.split(\"/\")) {\n            if (part.isEmpty() || part.equals(\".\")) continue;\n            if (part.equals(\"..\")) {\n                if (!stack.isEmpty()) stack.pollLast();\n            } else {\n                stack.addLast(part);\n            }\n        }\n        return \"/\" + String.join(\"/\", stack);\n    }\n}\n",
+    "hints": [
+      "Split on `/` and skip empty parts and `.`.",
+      "Use a `Deque` with `addLast` and `pollLast` so `String.join` reads it in the right order at the end."
+    ]
+  }
 }

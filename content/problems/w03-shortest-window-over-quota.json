@@ -98,5 +98,14 @@
     "Once it does, shrink from the left as far as you can while the sum still meets the quota, recording the length each time.",
     "This works because every value is positive: removing a value always lowers the sum."
   ],
-  "solution": "def shortest_over_quota(usage, quota):\n    best = 0\n    total = 0\n    start = 0\n    for end, amount in enumerate(usage):\n        total += amount\n        while total >= quota:\n            length = end - start + 1\n            if best == 0 or length < best:\n                best = length\n            total -= usage[start]\n            start += 1\n    return best\n"
+  "solution": "def shortest_over_quota(usage, quota):\n    best = 0\n    total = 0\n    start = 0\n    for end, amount in enumerate(usage):\n        total += amount\n        while total >= quota:\n            length = end - start + 1\n            if best == 0 or length < best:\n                best = length\n            total -= usage[start]\n            start += 1\n    return best\n",
+  "java": {
+    "methodName": "shortestOverQuota",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int shortestOverQuota(int[] usage, int quota) {\n        // Your code here\n        return 0;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int shortestOverQuota(int[] usage, int quota) {\n        int best = 0, total = 0, start = 0;\n        for (int end = 0; end < usage.length; end++) {\n            total += usage[end];\n            while (total >= quota) {\n                int length = end - start + 1;\n                if (best == 0 || length < best) best = length;\n                total -= usage[start++];\n            }\n        }\n        return best;\n    }\n}\n",
+    "hints": [
+      "Grow the window on the right until the sum reaches the quota.",
+      "Then shrink from the left while it still meets the quota, recording the length each time."
+    ]
+  }
 }

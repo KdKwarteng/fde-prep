@@ -154,5 +154,14 @@
     "Recurse only when the key exists in both and both values are dictionaries.",
     "The tests cannot see whether you modified the inputs, but a customer's defaults being silently changed is a real bug. Build new dictionaries as you go."
   ],
-  "solution": "def deep_merge(defaults, overrides):\n    merged = dict(defaults)\n    for key, value in overrides.items():\n        if isinstance(value, dict) and isinstance(merged.get(key), dict):\n            merged[key] = deep_merge(merged[key], value)\n        else:\n            merged[key] = value\n    return merged\n"
+  "solution": "def deep_merge(defaults, overrides):\n    merged = dict(defaults)\n    for key, value in overrides.items():\n        if isinstance(value, dict) and isinstance(merged.get(key), dict):\n            merged[key] = deep_merge(merged[key], value)\n        else:\n            merged[key] = value\n    return merged\n",
+  "java": {
+    "methodName": "deepMerge",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static Map<String, Object> deepMerge(Map<String, Object> defaults, Map<String, Object> overrides) {\n        // Your code here\n        return new HashMap<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    @SuppressWarnings(\"unchecked\")\n    static Map<String, Object> deepMerge(Map<String, Object> defaults, Map<String, Object> overrides) {\n        Map<String, Object> merged = new LinkedHashMap<>(defaults);\n        for (Map.Entry<String, Object> entry : overrides.entrySet()) {\n            Object current = merged.get(entry.getKey());\n            if (entry.getValue() instanceof Map && current instanceof Map) {\n                merged.put(entry.getKey(), deepMerge((Map<String, Object>) current, (Map<String, Object>) entry.getValue()));\n            } else {\n                merged.put(entry.getKey(), entry.getValue());\n            }\n        }\n        return merged;\n    }\n}\n",
+    "hints": [
+      "Start from `new LinkedHashMap<>(defaults)`, a shallow copy, then walk the overrides.",
+      "Recurse only when both values are maps. Build new maps instead of modifying the inputs."
+    ]
+  }
 }

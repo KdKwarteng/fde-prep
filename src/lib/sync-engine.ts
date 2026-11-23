@@ -49,6 +49,8 @@ export function mergeProgress(local: Progress, remote: Progress): Progress {
 
   return {
     startDate: remote.startDate,
+    // Records saved before the language setting existed have none.
+    language: remote.language ?? local.language,
     unlockAll: remote.unlockAll,
     solved,
     tasks,
@@ -198,5 +200,5 @@ export class SyncEngine {
 }
 
 function emptyLike(current: Progress): Progress {
-  return { startDate: current.startDate, unlockAll: false, solved: {}, tasks: {}, activity: {} };
+  return { startDate: current.startDate, language: current.language, unlockAll: false, solved: {}, tasks: {}, activity: {} };
 }

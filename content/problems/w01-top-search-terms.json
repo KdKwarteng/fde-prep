@@ -83,5 +83,15 @@
     "Slicing with `[:k]` is safe even when the list is shorter than `k`."
   ],
   "javaTip": "A tuple sort key replaces a chained `Comparator.comparing(...).thenComparing(...)`. Negating the count is the usual trick for descending order.",
-  "solution": "from collections import Counter\n\ndef top_terms(text, k):\n    words = (w.strip(\".,!?:;\").lower() for w in text.split())\n    counts = Counter(w for w in words if w)\n    ranked = sorted(counts.items(), key=lambda pair: (-pair[1], pair[0]))\n    return [[word, count] for word, count in ranked[:k]]\n"
+  "solution": "from collections import Counter\n\ndef top_terms(text, k):\n    words = (w.strip(\".,!?:;\").lower() for w in text.split())\n    counts = Counter(w for w in words if w)\n    ranked = sorted(counts.items(), key=lambda pair: (-pair[1], pair[0]))\n    return [[word, count] for word, count in ranked[:k]]\n",
+  "java": {
+    "methodName": "topTerms",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static List<List<Object>> topTerms(String text, int k) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static List<List<Object>> topTerms(String text, int k) {\n        Map<String, Integer> counts = new HashMap<>();\n        for (String raw : text.trim().split(\"\\\\s+\")) {\n            String word = raw.toLowerCase().replaceAll(\"^[.,!?:;]+|[.,!?:;]+$\", \"\");\n            if (!word.isEmpty()) counts.merge(word, 1, Integer::sum);\n        }\n        List<Map.Entry<String, Integer>> ranked = new ArrayList<>(counts.entrySet());\n        ranked.sort(Map.Entry.<String, Integer>comparingByValue().reversed()\n                .thenComparing(Map.Entry.comparingByKey()));\n        List<List<Object>> result = new ArrayList<>();\n        for (Map.Entry<String, Integer> entry : ranked.subList(0, Math.min(k, ranked.size()))) {\n            result.add(List.of(entry.getKey(), entry.getValue()));\n        }\n        return result;\n    }\n}\n",
+    "hints": [
+      "A regex like `^[.,!?:;]+|[.,!?:;]+$` strips punctuation from both ends.",
+      "Sort entries with `comparingByValue().reversed().thenComparing(comparingByKey())`.",
+      "Each pair can be `List.of(word, count)`."
+    ]
+  }
 }

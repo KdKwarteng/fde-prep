@@ -2,9 +2,12 @@
 
 import { useSyncExternalStore } from "react";
 import { DEFAULT_START_DATE } from "@/data/curriculum";
+import type { Language } from "@/data/problems";
 
 export type Progress = {
   startDate: string;
+  /** Which language the editor opens in. */
+  language: Language;
   unlockAll: boolean;
   /** problem id -> ISO date first solved */
   solved: Record<string, string>;
@@ -19,6 +22,7 @@ const DRAFT_PREFIX = "fde-prep:draft:";
 
 export const EMPTY_PROGRESS: Progress = {
   startDate: DEFAULT_START_DATE,
+  language: "python",
   unlockAll: false,
   solved: {},
   tasks: {},
@@ -98,6 +102,9 @@ export const progressActions = {
   setStartDate(startDate: string) {
     write({ ...read(), startDate });
   },
+  setLanguage(language: Language) {
+    write({ ...read(), language });
+  },
   setUnlockAll(unlockAll: boolean) {
     write({ ...read(), unlockAll });
   },
@@ -145,22 +152,27 @@ export function useToday(): string | null {
   );
 }
 
-export function loadDraft(problemId: string): string | null {
+// Python drafts keep their original key so drafts saved before Java support still load.
+function draftKey(problemId: string, language: Language): string {
+  return language === "python" ? DRAFT_PREFIX + problemId : `${DRAFT_PREFIX}${language}:${problemId}`;
+}
+
+export function loadDraft(problemId: string, language: Language): string | null {
   try {
-    return window.localStorage.getItem(DRAFT_PREFIX + problemId);
+    return window.localStorage.getItem(draftKey(problemId, language));
   } catch {
     return null;
   }
 }
 
-export function saveDraft(problemId: string, code: string) {
+export function saveDraft(problemId: string, language: Language, code: string) {
   try {
-    window.localStorage.setItem(DRAFT_PREFIX + problemId, code);
+    window.localStorage.setItem(draftKey(problemId, language), code);
   } catch {}
 }
 
-export function clearDraft(problemId: string) {
+export function clearDraft(problemId: string, language: Language) {
   try {
-    window.localStorage.removeItem(DRAFT_PREFIX + problemId);
+    window.localStorage.removeItem(draftKey(problemId, language));
   } catch {}
 }

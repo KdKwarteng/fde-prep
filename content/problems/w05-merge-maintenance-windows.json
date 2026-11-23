@@ -169,5 +169,14 @@
     "If the next window starts at or before the end of the last merged window, extend that end. Otherwise start a new merged window.",
     "Use `max` when extending: the next window might end earlier than the one it overlaps."
   ],
-  "solution": "def merge_windows(windows):\n    merged = []\n    for start, end in sorted(windows):\n        if merged and start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n"
+  "solution": "def merge_windows(windows):\n    merged = []\n    for start, end in sorted(windows):\n        if merged and start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n",
+  "java": {
+    "methodName": "mergeWindows",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int[][] mergeWindows(int[][] windows) {\n        // Your code here\n        return new int[0][];\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int[][] mergeWindows(int[][] windows) {\n        int[][] sorted = windows.clone();\n        Arrays.sort(sorted, Comparator.comparingInt(w -> w[0]));\n        List<int[]> merged = new ArrayList<>();\n        for (int[] w : sorted) {\n            if (!merged.isEmpty() && w[0] <= merged.get(merged.size() - 1)[1]) {\n                int[] last = merged.get(merged.size() - 1);\n                last[1] = Math.max(last[1], w[1]);\n            } else {\n                merged.add(new int[] {w[0], w[1]});\n            }\n        }\n        return merged.toArray(new int[0][]);\n    }\n}\n",
+    "hints": [
+      "Sort by start with `Arrays.sort(windows, Comparator.comparingInt(w -> w[0]))`.",
+      "Extend the last merged window with `Math.max` when the next one overlaps or touches it."
+    ]
+  }
 }

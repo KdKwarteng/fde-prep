@@ -75,5 +75,14 @@
     "Finish with a dict comprehension that turns each set into a sorted list."
   ],
   "javaTip": "`defaultdict(set)` is the Python version of `computeIfAbsent(k, x -> new HashSet<>())`.",
-  "solution": "from collections import defaultdict\n\ndef invert_index(account_tags):\n    index = defaultdict(set)\n    for account, tags in account_tags.items():\n        for tag in tags:\n            index[tag].add(account)\n    return {tag: sorted(accounts) for tag, accounts in index.items()}\n"
+  "solution": "from collections import defaultdict\n\ndef invert_index(account_tags):\n    index = defaultdict(set)\n    for account, tags in account_tags.items():\n        for tag in tags:\n            index[tag].add(account)\n    return {tag: sorted(accounts) for tag, accounts in index.items()}\n",
+  "java": {
+    "methodName": "invertIndex",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static Map<String, List<String>> invertIndex(Map<String, List<String>> accountTags) {\n        // Your code here\n        return new HashMap<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static Map<String, List<String>> invertIndex(Map<String, List<String>> accountTags) {\n        Map<String, TreeSet<String>> index = new HashMap<>();\n        for (Map.Entry<String, List<String>> entry : accountTags.entrySet()) {\n            for (String tag : entry.getValue()) {\n                index.computeIfAbsent(tag, t -> new TreeSet<>()).add(entry.getKey());\n            }\n        }\n        Map<String, List<String>> result = new HashMap<>();\n        index.forEach((tag, accounts) -> result.put(tag, new ArrayList<>(accounts)));\n        return result;\n    }\n}\n",
+    "hints": [
+      "`computeIfAbsent(tag, t -> new TreeSet<>())` creates the set the first time a tag appears.",
+      "A `TreeSet` keeps accounts sorted and unique, so you only convert it to a list at the end."
+    ]
+  }
 }

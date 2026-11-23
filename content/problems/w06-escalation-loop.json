@@ -78,5 +78,14 @@
     "If you reach `None`, there is no loop. If you reach someone already visited, there is.",
     "Stretch: do it with no extra memory using two walkers, one moving one step at a time and one moving two. If there is a loop, the fast one catches the slow one."
   ],
-  "solution": "def has_loop(escalates_to, start):\n    slow = fast = start\n    while fast is not None and escalates_to[fast] is not None:\n        slow = escalates_to[slow]\n        fast = escalates_to[escalates_to[fast]]\n        if slow == fast:\n            return True\n    return False\n"
+  "solution": "def has_loop(escalates_to, start):\n    slow = fast = start\n    while fast is not None and escalates_to[fast] is not None:\n        slow = escalates_to[slow]\n        fast = escalates_to[escalates_to[fast]]\n        if slow == fast:\n            return True\n    return False\n",
+  "java": {
+    "methodName": "hasLoop",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static boolean hasLoop(Map<String, String> escalatesTo, String start) {\n        // Your code here\n        return false;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static boolean hasLoop(Map<String, String> escalatesTo, String start) {\n        String slow = start, fast = start;\n        while (fast != null && escalatesTo.get(fast) != null) {\n            slow = escalatesTo.get(slow);\n            fast = escalatesTo.get(escalatesTo.get(fast));\n            if (slow.equals(fast)) return true;\n        }\n        return false;\n    }\n}\n",
+    "hints": [
+      "Follow the pointers and remember who you have visited in a `HashSet`.",
+      "Stretch: use two walkers, one moving one step and one moving two. Compare names with `equals`, not `==`."
+    ]
+  }
 }

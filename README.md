@@ -42,7 +42,7 @@ Each week has three parts: a set of coding problems solved on the site, a **buil
 
 - **Weekly dashboard.** The home page shows the current week's problems and tasks, with totals for problems solved, tasks finished, and your daily streak.
 - **Locked future weeks.** A week opens on its Monday. The roadmap page shows all 26 weeks with a progress bar for each one that is open.
-- **In-browser Python.** Solutions run against test cases entirely in the browser. There is no server to send code to.
+- **Python or Java.** Pick a language on any problem page or in settings. Both run against the same test cases entirely in the browser, with no server to send code to. Each language keeps its own saved code, hints, and reference solution.
 - **FDE-style problems.** Problems are framed as the work the role involves, such as cleaning a customer's export, reconciling two ledgers during a migration, or parsing a legacy config format.
 - **Graduated help.** Each problem has hints that reveal one at a time. The reference solution unlocks after you solve the problem or use every hint. Week 1 problems include a "Coming from Java" note.
 - **Saved work.** Code drafts are saved as you type, and progress survives a page reload.
@@ -57,13 +57,14 @@ Each week has three parts: a set of coding problems solved on the site, a **buil
 | Styling | Tailwind CSS | Small design-token set in `globals.css`, with light and dark themes that follow the system |
 | Editor | [CodeMirror 6](https://codemirror.net) | Lightweight, with Python syntax highlighting |
 | Python runtime | [Pyodide](https://pyodide.org) | CPython compiled to WebAssembly, so real Python runs in the browser |
+| Java runtime | [CheerpJ](https://cheerpj.com) 5 (Java 17) | A JVM compiled to WebAssembly, so real Java compiles and runs in the browser. Free community license, which asks for a "Built with CheerpJ" credit |
 | Storage | Browser `localStorage` | Works with no backend, and stays the fast local copy when sync is on |
 | Auth and sync | [Supabase](https://supabase.com) with GitHub OAuth | Optional. Hosted Postgres with row-level security, called straight from the browser |
 | CI | GitHub Actions | Verifies problems, runs unit tests, lints, and builds on every push |
 
 ## Run it locally
 
-Requires Node.js 20 or newer. Python 3 is needed only for `npm run verify`.
+Requires Node.js 20 or newer. Python 3 and a Java 17+ JDK are needed only for `npm run verify`.
 
 ```bash
 npm install
@@ -78,7 +79,8 @@ Then open http://localhost:3000.
 | `npm run build` | Production build |
 | `npm run start` | Serve the production build |
 | `npm run lint` | ESLint |
-| `npm run verify` | Run every problem's reference solution against its tests |
+| `npm run verify` | Run every problem's Python and Java reference solutions against its tests |
+| `npm run verify:java` | Rebuild `public/java/harness.jar` and check only the Java versions |
 | `npm test` | Unit tests for the sync logic |
 
 `dev` and `build` first run two small scripts. `scripts/copy-pyodide.mjs` copies the Pyodide runtime from `node_modules` into `public/pyodide/`, and `scripts/build-problem-index.mjs` builds the problem index. Both outputs are git-ignored.
@@ -114,11 +116,17 @@ A problem file looks like this (shortened):
   ],
   "hints": ["First hint...", "Second hint..."],
   "javaTip": "Optional note for Java developers",
-  "solution": "def chunk(items, size):\n    return [...]\n"
+  "solution": "def chunk(items, size):\n    return [...]\n",
+  "java": {
+    "methodName": "chunk",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static <T> List<List<T>> chunk(List<T> items, int size) {...}\n}\n",
+    "solution": "...",
+    "hints": ["Java-specific hint..."]
+  }
 }
 ```
 
-`week` decides when the problem unlocks, and `order` sets its position within the week. Each test calls `functionName` with `args` and compares the return value to `expected`.
+`week` decides when the problem unlocks, and `order` sets its position within the week. Each test calls `functionName` with `args` and compares the return value to `expected`. The optional `java` block holds the Java version. It reuses the same `tests`, so both languages are checked against exactly the same cases.
 
 ### 2. Pages and routing
 
@@ -225,6 +233,16 @@ progress.ts        The local store from section 4
 
 Setup steps are in [docs/sync-setup.md](docs/sync-setup.md).
 
+### 6b. Running Java
+
+Java follows the same shape as Python, with a different runtime.
+
+1. **`src/lib/java-runner.ts`** loads the CheerpJ loader script from CheerpJ's CDN the first time you pick Java, starts a Java 17 runtime, and loads `public/java/harness.jar`. The first run downloads the runtime, so it takes longer than later runs.
+2. **The harness jar** is built from `java/src/dev/fdeprep/` by `scripts/build-java-harness.sh` and committed, because Vercel's build machines have no JDK. `Harness.run(code, methodName, testsJson)` compiles your `class Solution` in memory with the JDK's own compiler (`javax.tools`), finds the method by name, and runs each test.
+3. **Converting JSON to Java types.** Test inputs are JSON, but Java methods have types. `Convert.java` reads the method's generic signature with reflection and builds the matching values: `int[]`, `List<String>`, `Map<String, List<String>>`, or a small class like `ListNode` whose fields are filled by name. Return values go back to JSON the same way, and `Convert.same` compares them to `expected` the way the Python harness does (a `Set` becomes a sorted list, `2` equals `2.0`).
+4. **Infinite loops.** Each test runs on its own thread with a 10-second deadline. CheerpJ can't kill a thread, so a timed-out run tells you to reload the page if later runs stay slow.
+5. **Compiler fallback.** If a runtime ever ships without `javac`, the harness falls back to the Eclipse compiler in `public/java/ecj.jar` (EPL-2.0), which CheerpJ only downloads if it is needed.
+
 ### 7. Checking the problems themselves
 
 `scripts/verify_problems.py` loads the same `public/harness.py` that the browser uses and, for every problem file, checks that:
@@ -233,7 +251,7 @@ Setup steps are in [docs/sync-setup.md](docs/sync-setup.md).
 - the reference solution passes every test, and
 - the starter code does not already pass every test.
 
-Because the script and the browser share one harness, a problem that verifies locally behaves the same way on the site. CI runs this script on every push, along with the unit tests, lint, and a production build.
+Because the script and the browser share one harness, a problem that verifies locally behaves the same way on the site. `java/src/dev/fdeprep/VerifyCli.java` does the same for every `java` block, using the same `harness.jar` the browser loads, and also checks it with the Eclipse compiler fallback when run with `-Dfdeprep.compiler=ecj`. CI runs this script on every push, along with the unit tests, lint, and a production build.
 
 ## Project layout
 
@@ -243,10 +261,14 @@ public/
   harness.py              Python test harness (browser and verify script)
   py-worker.js            Web worker that loads Pyodide and runs the harness
   pyodide/                Pyodide runtime, copied at build time (git-ignored)
+  java/harness.jar        Java test harness, built from java/src (committed)
+  java/ecj.jar            Eclipse Java compiler, used only as a fallback
+java/src/dev/fdeprep/     Java harness source: Harness, Convert, Json, VerifyCli
 scripts/
   copy-pyodide.mjs        Copies Pyodide out of node_modules
   build-problem-index.mjs Combines content/problems into one index
   verify_problems.py      Checks every problem's solution against its tests
+  build-java-harness.sh   Compiles java/src into public/java/harness.jar
 src/
   app/                    Routes and the root layout
   components/
@@ -268,6 +290,7 @@ src/
     sync-engine.ts        Sync rules, tested in sync-engine.test.ts
     schedule.ts           Week and streak date math
     runner.ts             Page-side client for the Python worker
+    java-runner.ts        Loads CheerpJ and calls the Java harness
 supabase/schema.sql       Table and row-level security policies for sync
 docs/sync-setup.md        How to turn on sign-in and sync
 .github/workflows/ci.yml  Verify, test, lint, build
@@ -276,7 +299,8 @@ docs/sync-setup.md        How to turn on sign-in and sync
 ## Add a problem
 
 1. Create `content/problems/<id>.json`, using an existing file as a template. The `id` must match the file name. By convention ids start with the week, as in `w03-...`.
-2. Run `npm run verify`.
+2. Optionally add a `java` block with `methodName`, `starterCode`, `solution`, and `hints`. Problems without one show the Java button disabled.
+3. Run `npm run verify`.
 
 The problem index is rebuilt from the folder each time you run `dev` or `build`, so there is nothing to register by hand.
 
@@ -294,5 +318,7 @@ To turn on sign-in and sync, follow [docs/sync-setup.md](docs/sync-setup.md) and
 - **Code drafts do not sync.** Only progress does. Drafts stay in the browser where you typed them.
 - **Whole-object sync.** Progress is saved as one JSON document, and the newest save wins when two devices change it at the same moment. That is fine for one person, and would need per-field timestamps for anything collaborative.
 - **Problem sets exist for weeks 1 to 6.** Later weeks show their focus topic and tasks, with problems still to be written.
+- **Java needs a CDN.** CheerpJ's license requires loading it from their CDN, so Java (unlike Python) does not work offline or where `cjrtnc.leaningtech.com` is blocked.
+- **Java problem text is written for Python.** The description names the Python function, and the Java panel tells you the Java method name. The inputs and outputs are the same.
 - **Standard library only.** Solutions can import anything in Python's standard library. Third-party packages such as `numpy` are not loaded.
 - **Single-function problems.** Every problem tests one function with JSON inputs and outputs, so linked lists are represented as nested dictionaries. Class-based problems, such as an LRU cache, will need a small extension to the harness.

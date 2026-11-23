@@ -57,5 +57,14 @@
     "Remember the last index where you saw each character in a dict.",
     "When the current character was last seen inside the window, jump `start` to just past that index. Be careful not to move `start` backward."
   ],
-  "solution": "def longest_unique_run(pages):\n    last_seen = {}\n    start = 0\n    best = 0\n    for end, page in enumerate(pages):\n        if page in last_seen and last_seen[page] >= start:\n            start = last_seen[page] + 1\n        last_seen[page] = end\n        best = max(best, end - start + 1)\n    return best\n"
+  "solution": "def longest_unique_run(pages):\n    last_seen = {}\n    start = 0\n    best = 0\n    for end, page in enumerate(pages):\n        if page in last_seen and last_seen[page] >= start:\n            start = last_seen[page] + 1\n        last_seen[page] = end\n        best = max(best, end - start + 1)\n    return best\n",
+  "java": {
+    "methodName": "longestUniqueRun",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int longestUniqueRun(String pages) {\n        // Your code here\n        return 0;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int longestUniqueRun(String pages) {\n        Map<Character, Integer> lastSeen = new HashMap<>();\n        int start = 0, best = 0;\n        for (int end = 0; end < pages.length(); end++) {\n            char page = pages.charAt(end);\n            Integer previous = lastSeen.get(page);\n            if (previous != null && previous >= start) start = previous + 1;\n            lastSeen.put(page, end);\n            best = Math.max(best, end - start + 1);\n        }\n        return best;\n    }\n}\n",
+    "hints": [
+      "Keep a window `[start, end]` that never contains a repeat.",
+      "Remember the last index of each character. When it falls inside the window, jump `start` past it, never backward."
+    ]
+  }
 }

@@ -93,5 +93,14 @@
     "Use the sorted characters, joined into a string or as a tuple, as a dictionary key.",
     "Sort each group, then sort the list of groups. Lists compare element by element."
   ],
-  "solution": "from collections import defaultdict\n\ndef group_skus(codes):\n    groups = defaultdict(list)\n    for code in codes:\n        groups[\"\".join(sorted(code))].append(code)\n    return sorted(sorted(group) for group in groups.values())\n"
+  "solution": "from collections import defaultdict\n\ndef group_skus(codes):\n    groups = defaultdict(list)\n    for code in codes:\n        groups[\"\".join(sorted(code))].append(code)\n    return sorted(sorted(group) for group in groups.values())\n",
+  "java": {
+    "methodName": "groupSkus",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static List<List<String>> groupSkus(List<String> codes) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static List<List<String>> groupSkus(List<String> codes) {\n        Map<String, List<String>> groups = new HashMap<>();\n        for (String code : codes) {\n            char[] chars = code.toCharArray();\n            Arrays.sort(chars);\n            groups.computeIfAbsent(new String(chars), key -> new ArrayList<>()).add(code);\n        }\n        List<List<String>> result = new ArrayList<>();\n        for (List<String> group : groups.values()) {\n            Collections.sort(group);\n            result.add(group);\n        }\n        result.sort(Comparator.comparing(group -> group.get(0)));\n        return result;\n    }\n}\n",
+    "hints": [
+      "Two codes belong together when their sorted characters are equal. Sort a `char[]` and turn it back into a `String` for the key.",
+      "Sort each group, then sort the groups by their first code."
+    ]
+  }
 }

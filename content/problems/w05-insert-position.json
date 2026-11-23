@@ -87,5 +87,14 @@
     "This has the same shape as the first failing build problem: a boundary between values that are too small and values that are not.",
     "After you have written it by hand, look at `bisect.bisect_left`. It does exactly this, and interviewers are happy for you to use it once you can explain it."
   ],
-  "solution": "def insert_position(times, new_time):\n    low, high = 0, len(times)\n    while low < high:\n        mid = (low + high) // 2\n        if times[mid] < new_time:\n            low = mid + 1\n        else:\n            high = mid\n    return low\n"
+  "solution": "def insert_position(times, new_time):\n    low, high = 0, len(times)\n    while low < high:\n        mid = (low + high) // 2\n        if times[mid] < new_time:\n            low = mid + 1\n        else:\n            high = mid\n    return low\n",
+  "java": {
+    "methodName": "insertPosition",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int insertPosition(int[] times, int newTime) {\n        // Your code here\n        return -1;\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int insertPosition(int[] times, int newTime) {\n        int low = 0, high = times.length;\n        while (low < high) {\n            int mid = (low + high) >>> 1;\n            if (times[mid] < newTime) low = mid + 1;\n            else high = mid;\n        }\n        return low;\n    }\n}\n",
+    "hints": [
+      "You want the first index whose value is at least `newTime`.",
+      "Same shape as the first failing build problem. `Arrays.binarySearch` will not help here because it returns any match, not the first."
+    ]
+  }
 }

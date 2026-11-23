@@ -118,5 +118,14 @@
     "For each new time, drop expired times from the front, then the queue length is the answer.",
     "`collections.deque` gives O(1) `popleft`. Popping from the front of a list is O(n)."
   ],
-  "solution": "from collections import deque\n\ndef window_counts(timestamps, window):\n    recent = deque()\n    counts = []\n    for time in timestamps:\n        recent.append(time)\n        while recent[0] < time - window:\n            recent.popleft()\n        counts.append(len(recent))\n    return counts\n"
+  "solution": "from collections import deque\n\ndef window_counts(timestamps, window):\n    recent = deque()\n    counts = []\n    for time in timestamps:\n        recent.append(time)\n        while recent[0] < time - window:\n            recent.popleft()\n        counts.append(len(recent))\n    return counts\n",
+  "java": {
+    "methodName": "windowCounts",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int[] windowCounts(int[] timestamps, int window) {\n        // Your code here\n        return new int[0];\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int[] windowCounts(int[] timestamps, int window) {\n        Deque<Integer> recent = new ArrayDeque<>();\n        int[] counts = new int[timestamps.length];\n        for (int i = 0; i < timestamps.length; i++) {\n            int time = timestamps[i];\n            recent.addLast(time);\n            while (recent.peekFirst() < time - window) recent.pollFirst();\n            counts[i] = recent.size();\n        }\n        return counts;\n    }\n}\n",
+    "hints": [
+      "Keep a queue of timestamps still inside the window.",
+      "`ArrayDeque` gives O(1) `pollFirst`. Drop expired times from the front, then the size is the answer."
+    ]
+  }
 }

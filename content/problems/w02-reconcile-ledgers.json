@@ -103,5 +103,14 @@
     "Convert both lists to sets first.",
     "Set difference is the `-` operator: `old - new`."
   ],
-  "solution": "def reconcile(old_ids, new_ids):\n    old, new = set(old_ids), set(new_ids)\n    return [sorted(old - new), sorted(new - old)]\n"
+  "solution": "def reconcile(old_ids, new_ids):\n    old, new = set(old_ids), set(new_ids)\n    return [sorted(old - new), sorted(new - old)]\n",
+  "java": {
+    "methodName": "reconcile",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static List<List<String>> reconcile(List<String> oldIds, List<String> newIds) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static List<List<String>> reconcile(List<String> oldIds, List<String> newIds) {\n        TreeSet<String> missing = new TreeSet<>(oldIds);\n        missing.removeAll(newIds);\n        TreeSet<String> extra = new TreeSet<>(newIds);\n        extra.removeAll(oldIds);\n        return List.of(new ArrayList<>(missing), new ArrayList<>(extra));\n    }\n}\n",
+    "hints": [
+      "A `TreeSet` built from a list removes duplicates and sorts in one step.",
+      "`removeAll` is set difference."
+    ]
+  }
 }

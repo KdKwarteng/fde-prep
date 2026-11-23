@@ -121,5 +121,14 @@
     "When a new day arrives, it answers every waiting day on top of the stack that has a lower volume. Pop those and fill in their answers.",
     "Each index is pushed once and popped at most once, so the total work is O(n)."
   ],
-  "solution": "def days_until_busier(volumes):\n    result = [0] * len(volumes)\n    waiting = []\n    for day, volume in enumerate(volumes):\n        while waiting and volumes[waiting[-1]] < volume:\n            earlier = waiting.pop()\n            result[earlier] = day - earlier\n        waiting.append(day)\n    return result\n"
+  "solution": "def days_until_busier(volumes):\n    result = [0] * len(volumes)\n    waiting = []\n    for day, volume in enumerate(volumes):\n        while waiting and volumes[waiting[-1]] < volume:\n            earlier = waiting.pop()\n            result[earlier] = day - earlier\n        waiting.append(day)\n    return result\n",
+  "java": {
+    "methodName": "daysUntilBusier",
+    "starterCode": "import java.util.*;\n\nclass Solution {\n    static int[] daysUntilBusier(int[] volumes) {\n        // Your code here\n        return new int[0];\n    }\n}\n",
+    "solution": "import java.util.*;\n\nclass Solution {\n    static int[] daysUntilBusier(int[] volumes) {\n        int[] result = new int[volumes.length];\n        Deque<Integer> waiting = new ArrayDeque<>();\n        for (int day = 0; day < volumes.length; day++) {\n            while (!waiting.isEmpty() && volumes[waiting.peek()] < volumes[day]) {\n                int earlier = waiting.pop();\n                result[earlier] = day - earlier;\n            }\n            waiting.push(day);\n        }\n        return result;\n    }\n}\n",
+    "hints": [
+      "Keep a stack of the indices of days still waiting for a busier day.",
+      "A new day answers every waiting day on top of the stack with a lower volume."
+    ]
+  }
 }

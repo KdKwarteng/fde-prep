@@ -11,7 +11,7 @@ import {
   type SyncMemory,
 } from "./sync-engine.ts";
 
-const base: Progress = { startDate: "2026-11-16", unlockAll: false, solved: {}, tasks: {}, activity: {} };
+const base: Progress = { startDate: "2026-11-16", language: "python", unlockAll: false, solved: {}, tasks: {}, activity: {} };
 const make = (patch: Partial<Progress>): Progress => ({ ...base, ...patch });
 
 class FakeRemote implements RemoteStore {
@@ -62,6 +62,21 @@ test("mergeProgress unions work and keeps the earliest solve date", () => {
   assert.deepEqual(merged.tasks, { "w1-build": true, "w1-customer": true });
   assert.deepEqual(merged.activity, { "2026-11-18": 2, "2026-11-19": 1 });
   assert.equal(merged.unlockAll, true);
+});
+
+test("mergeProgress takes the language setting from the server copy", () => {
+  const merged = mergeProgress(make({ language: "python" }), make({ language: "java" }));
+  assert.equal(merged.language, "java");
+});
+
+test("switching accounts keeps this browser's language choice", async () => {
+  const { local, engine } = device(new FakeRemote());
+  await engine.signIn("user-a");
+  local.set(make({ language: "java", solved: { a: "2026-11-20" } }));
+  engine.signOut();
+  await engine.signIn("user-b");
+  assert.equal(local.get().language, "java");
+  assert.deepEqual(local.get().solved, {});
 });
 
 test("first sign-in uploads the guest progress from this browser", async () => {
